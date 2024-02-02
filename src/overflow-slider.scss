@@ -1,0 +1,213 @@
+/**
+ * Overflow Slider
+ */
+
+/* --------------------------------------------------------------
+# Container
+-------------------------------------------------------------- */
+
+.overflow-slider {
+	overflow: auto;
+	width: 100%;
+	overflow: auto;
+	display: grid;
+	grid-auto-flow: column;
+	grid-template-columns: max-content;
+	max-width: max-content;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	& > * {
+		scroll-snap-align: start;
+		outline-offset: -2px;
+	}
+}
+
+/* --------------------------------------------------------------
+# ArrowsPlugin
+-------------------------------------------------------------- */
+
+:root {
+	--overflow-slider-arrows-size: 1.5rem;
+	--overflow-slider-arrows-gap: .5rem;
+	--overflow-slider-arrows-inactive-opacity: 0.5;
+}
+
+.overflow-slider__arrows {
+	display: flex;
+	gap: var(--overflow-slider-arrows-gap);
+}
+
+.overflow-slider__arrows-button {
+	display: flex;
+	align-items: center;
+	outline-offset: -2px;
+	cursor: pointer;
+	svg {
+		width: var(--overflow-slider-arrows-size);
+		height: var(--overflow-slider-arrows-size);
+
+	}
+	&[data-has-content="false"] {
+		opacity: var(--overflow-slider-arrows-inactive-opacity);
+	}
+}
+
+/* --------------------------------------------------------------
+# DotsPlugin
+-------------------------------------------------------------- */
+
+:root {
+	--overflow-slider-dots-gap: 0.5rem;
+	--overflow-slider-dot-size: 0.75rem;
+	--overflow-slider-dot-inactive-color: hsla(0, 0%, 0%, 0.1);
+	--overflow-slider-dot-active-color: hsla(0, 0%, 0%, 0.8);
+}
+
+.overflow-slider__dots {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--overflow-slider-dots-gap);
+	}
+	li {
+		line-height: 0;
+		padding: 0;
+		margin: 0;
+	}
+}
+
+.overflow-slider__dot-item {
+	padding: 0;
+	margin: 0;
+	cursor: pointer;
+	outline-offset: 2px;
+	width: var(--overflow-slider-dot-size);
+	height: var(--overflow-slider-dot-size);
+	border-radius: 50%;
+	background: var(--overflow-slider-dot-inactive-color);
+	position: relative;
+	// increase clickable area
+	&::after {
+		content: '';
+		display: block;
+		left: calc(-1 * var(--overflow-slider-dots-gap));
+		top: calc(-1 * var(--overflow-slider-dots-gap));
+		right: calc(-1 * var(--overflow-slider-dots-gap));
+		bottom: calc(-1 * var(--overflow-slider-dots-gap));
+		position: absolute;
+	}
+	&[aria-pressed="true"],
+	&:focus,
+	&:hover {
+		background: var(--overflow-slider-dot-active-color);
+	}
+}
+
+/* --------------------------------------------------------------
+# DragScrollingPlugin
+-------------------------------------------------------------- */
+
+// nothing to style
+
+/* --------------------------------------------------------------
+# ScrollIndicatorPlugin
+-------------------------------------------------------------- */
+
+:root {
+	--overflow-slider-scroll-indicator-button-height: 4px;
+	--overflow-slider-scroll-indicator-padding: 1rem;
+	--overflow-slider-scroll-indicator-button-color: hsla(0, 0%, 0%, 0.75);
+	--overflow-slider-scroll-indicator-bar-color: hsla(0, 0%, 0%, 0.25);
+}
+
+.overflow-slider__scroll-indicator {
+	width: 100%;
+	padding-block: var(--overflow-slider-scroll-indicator-padding);
+	cursor: pointer;
+	position: relative;
+	outline: 0;
+	&[data-has-overflow="false"] {
+		display: none;
+	}
+	&:focus-visible .overflow-slider__scroll-indicator-button {
+		outline: 2px solid;
+		outline-offset: 2px;
+	}
+}
+
+.overflow-slider__scroll-indicator-bar {
+	height: 2px;
+	background: var(--overflow-slider-scroll-indicator-bar-color);
+	width: 100%;
+	border-radius: 3px;
+	position: absolute;
+	top: 50%;
+	left: 0;
+	transform: translateY(-50%);
+}
+
+.overflow-slider__scroll-indicator-button {
+	height: var(--overflow-slider-scroll-indicator-button-height);
+	background: var(--overflow-slider-scroll-indicator-button-color);
+	position: absolute;
+	top: calc(50% - calc( var( --overflow-slider-scroll-indicator-button-height ) / 2 ));
+	left: 0;
+	border-radius: 3px;
+	cursor: grab;
+	&[data-is-grabbed="true"],
+	&:hover {
+		--overflow-slider-scroll-indicator-button-height: 6px;
+	}
+	// increase clickable area to fill container in y-axis
+	&::after {
+		content: '';
+		display: block;
+		position: absolute;
+		top: calc(-1 * var(--overflow-slider-scroll-indicator-padding));
+		bottom: calc(-1 * var(--overflow-slider-scroll-indicator-padding));
+		width: 100%;
+	}
+}
+
+/* --------------------------------------------------------------
+# SkipLinksPlugin
+-------------------------------------------------------------- */
+
+// You need a .screen-reader-text class so something like this:
+
+// .screen-reader-text {
+// 	border: 0;
+// 	clip: rect(1px, 1px, 1px, 1px);
+// 	clip-path: inset(50%);
+// 	height: 1px;
+// 	margin: -1px;
+// 	overflow: hidden;
+// 	padding: 0;
+// 	position: absolute;
+// 	width: 1px;
+// 	word-wrap: normal !important;
+// 	&:focus {
+// 		background-color: #000;
+// 		clip: auto !important;
+// 		clip-path: none;
+// 		color: #fff;
+// 		display: block;
+// 		font-weight: 700;
+// 		height: auto;
+// 		outline-offset: -2px;
+// 		padding: 1rem 1.5rem;
+// 		text-decoration: none;
+// 		width: fit-content;
+// 		z-index: 100000;
+// 		position: relative;
+// 		margin-top: 1rem;
+// 		margin-bottom: 1rem;
+// 	}
+// }

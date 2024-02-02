@@ -1,0 +1,55 @@
+{
+	"name": "@evermade/overflow-slider",
+	"version": "1.0.0",
+	"description": "Accessible slider tha works with overflow: auto.",
+	"type": "module",
+	"main": "dist/index.js",
+	"module": "dist/index.esm.js",
+	"types": "dist/index.d.ts",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/evermade/overflow-slider.git"
+	},
+	"keywords": [
+		"overflow-slider"
+	],
+	"scripts": {
+		"build": "rollup -c",
+		"compress": "gzip -9 -fkc dist/index.min.js > dist/index.min.js.gz",
+		"show": "ls -lh dist/index.min.js.gz | awk '{print \"Gzipped script size:\", $5\"B\"}'",
+		"size": "npm run build -- --silent && npm run compress --silent && npm run show && rm dist/index.min.js.gz",
+		"watch": "rollup -c -w",
+		"test": "echo \"No tests specified\" && exit 0"
+	},
+	"author": "Teemu Suoranta, Evermade",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/evermade/overflow-slider/issues"
+	},
+	"devDependencies": {
+		"@rollup/plugin-commonjs": "^24.0.0",
+		"@rollup/plugin-node-resolve": "^15.0.0",
+		"@rollup/plugin-typescript": "^11.1.2",
+		"@tsconfig/recommended": "^1.0.2",
+		"@wordpress/eslint-plugin": "^14.3.0",
+		"@wordpress/prettier-config": "^2.13.0",
+		"autoprefixer": "^10.4.17",
+		"cssnano": "^6.0.3",
+		"eslint": "^8.37.0",
+		"rollup": "^2.79.1",
+		"rollup-plugin-copy": "^3.5.0",
+		"rollup-plugin-postcss": "^4.0.2",
+		"rollup-plugin-terser": "^7.0.2",
+		"sass": "^1.70.0",
+		"typescript": "^5.1.6"
+	},
+	"homepage": "https://github.com/evermade/overflow-slider#readme",
+	"publishConfig": {
+		"access": "public"
+	},
+	"dependencies": {
+		"resize-observer-polyfill": "^1.5.1",
+		"scrollbooster": "^3.0.2",
+		"simplebar": "^6.2.5"
+	}
+}
