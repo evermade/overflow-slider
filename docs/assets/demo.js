@@ -107,6 +107,16 @@ import {
 			]
 		);
 		console.log( '3-scroll-snapping-proximity', example3ScrollSnappingProximity );
+
+		const example3EntranceAnimation = new OverflowSlider(
+			document.querySelector( '.example-container-3-entrance-animation' ),
+			{},
+			[
+				DragScrollingPlugin(),
+				ScrollIndicatorPlugin(),
+			]
+		);
+		console.log( '3-entrance-animation', example3EntranceAnimation );
 	};
 
 	init();

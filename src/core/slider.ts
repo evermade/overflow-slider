@@ -197,7 +197,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 				}
 			}
 		}
-		slider.container.style.scrollBehavior = 'smooth';
+		slider.container.style.scrollBehavior = slider.options.scrollBehavior;
 		slider.container.scrollLeft = targetScrollPosition;
 		setTimeout(() => slider.container.style.scrollBehavior = '', 50);
 	}

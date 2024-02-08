@@ -15,12 +15,11 @@ export default function DragScrollingPlugin( args: { [key: string]: any } ) {
 		let startX = 0;
 		let scrollLeft = 0;
 
-		const hasOverflow = () => {
-			return slider.details.hasOverflow;
-		}
+		// add data attribute to container
+		slider.container.setAttribute( 'data-has-drag-scrolling', 'true' );
 
 		slider.container.addEventListener('mousedown', (e) => {
-			if ( ! hasOverflow() ) {
+			if ( ! slider.details.hasOverflow ) {
 				return;
 			}
 			isMouseDown = true;
@@ -29,6 +28,7 @@ export default function DragScrollingPlugin( args: { [key: string]: any } ) {
 			// change cursor to grabbing
 			slider.container.style.cursor = 'grabbing';
 			slider.container.style.scrollSnapType = 'none';
+			slider.container.style.scrollBehavior = 'auto';
 			// prevent pointer events on the slides
 			// const slides = slider.container.querySelectorAll( ':scope > *' );
 			// slides.forEach((slide) => {
@@ -39,13 +39,15 @@ export default function DragScrollingPlugin( args: { [key: string]: any } ) {
 			// e.stopPropagation();
 		});
 		window.addEventListener('mouseup', () => {
-			if ( ! hasOverflow() ) {
+			if ( ! slider.details.hasOverflow ) {
 				return;
 			}
 			isMouseDown = false;
 			slider.container.style.cursor = '';
-			slider.container.style.scrollSnapType = '';
+			// slider.container.style.scrollBehavior = slider.options.scrollBehavior;
 			setTimeout(() => {
+				slider.container.style.scrollSnapType = '';
+				slider.container.style.scrollBehavior = '';
 				const slides = slider.container.querySelectorAll( ':scope > *' );
 				slides.forEach((slide) => {
 					(<HTMLElement>slide).style.pointerEvents = '';
@@ -53,7 +55,7 @@ export default function DragScrollingPlugin( args: { [key: string]: any } ) {
 			}, 50);
 		});
 		window.addEventListener('mousemove', (e) => {
-			if ( ! hasOverflow() ) {
+			if ( ! slider.details.hasOverflow ) {
 				return;
 			}
 			if (!isMouseDown) {

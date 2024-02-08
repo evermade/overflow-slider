@@ -486,6 +486,24 @@ h3:before {
 	scroll-snap-type: x proximity;
 }
 
+.example-container-3-entrance-animation a {
+	animation: slideEntrance, slideEntrance;
+	animation-direction: normal, reverse;
+	animation-timeline: view(inline);
+	animation-range: entry, exit;
+}
+
+@keyframes slideEntrance {
+	0% {
+		transform: scale(.75);
+		opacity: 0;
+	}
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
 .overflow-slider__dots {
 	margin-top: 1.5rem;
 }

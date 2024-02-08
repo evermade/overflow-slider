@@ -14,8 +14,19 @@
 	grid-auto-flow: column;
 	grid-template-columns: max-content;
 	max-width: max-content;
+	// hide native scrollbars
 	&::-webkit-scrollbar {
 		display: none;
+	}
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+	// selecting text might make scrolling difficult
+	&[data-has-overflow="true"] {
+		user-select: none;
+	}
+	// show grab cursor if has drag scrolling
+	&[data-has-drag-scrolling][data-has-overflow="true"] {
+		cursor: grab;
 	}
 	& > * {
 		scroll-snap-align: start;

@@ -234,7 +234,7 @@ function Slider(container, options, plugins) {
                 }
             }
         }
-        slider.container.style.scrollBehavior = 'smooth';
+        slider.container.style.scrollBehavior = slider.options.scrollBehavior;
         slider.container.scrollLeft = targetScrollPosition;
         setTimeout(() => slider.container.style.scrollBehavior = '', 50);
     }
@@ -491,12 +491,13 @@ function ScrollIndicatorPlugin(args) {
             }
         });
         // make scrollbar button draggable via mouse/touch and update the scroll position
-        let isMouseDown = false;
+        let isInteractionDown = false;
         let startX = 0;
         let scrollLeft = 0;
-        scrollbarButton.addEventListener('mousedown', (e) => {
-            isMouseDown = true;
-            startX = e.pageX - scrollbarContainer.offsetLeft;
+        const onInteractionDown = (e) => {
+            isInteractionDown = true;
+            const pageX = e.pageX || e.touches[0].pageX;
+            startX = pageX - scrollbarContainer.offsetLeft;
             scrollLeft = slider.container.scrollLeft;
             // change cursor to grabbing
             scrollbarButton.style.cursor = 'grabbing';
@@ -504,23 +505,30 @@ function ScrollIndicatorPlugin(args) {
             scrollbarButton.setAttribute('data-is-grabbed', 'true');
             e.preventDefault();
             e.stopPropagation();
-        });
-        window.addEventListener('mouseup', () => {
-            isMouseDown = false;
-            scrollbarButton.style.cursor = '';
-            slider.container.style.scrollSnapType = '';
-            scrollbarButton.setAttribute('data-is-grabbed', 'false');
-        });
-        window.addEventListener('mousemove', (e) => {
-            if (!isMouseDown) {
+        };
+        const onInteractionMove = (e) => {
+            if (!isInteractionDown) {
                 return;
             }
             e.preventDefault();
-            const x = e.pageX - scrollbarContainer.offsetLeft;
+            const pageX = e.pageX || e.touches[0].pageX;
+            const x = pageX - scrollbarContainer.offsetLeft;
             const scrollingFactor = slider.container.scrollWidth / scrollbarContainer.offsetWidth;
             const walk = (x - startX) * scrollingFactor;
             slider.container.scrollLeft = scrollLeft + walk;
-        });
+        };
+        const onInteractionUp = () => {
+            isInteractionDown = false;
+            scrollbarButton.style.cursor = '';
+            slider.container.style.scrollSnapType = '';
+            scrollbarButton.setAttribute('data-is-grabbed', 'false');
+        };
+        scrollbarButton.addEventListener('mousedown', onInteractionDown);
+        scrollbarButton.addEventListener('touchstart', onInteractionDown);
+        window.addEventListener('mousemove', onInteractionMove);
+        window.addEventListener('touchmove', onInteractionMove, { passive: false });
+        window.addEventListener('mouseup', onInteractionUp);
+        window.addEventListener('touchend', onInteractionUp);
     };
 }
 
@@ -534,11 +542,10 @@ function DragScrollingPlugin(args) {
         let isMouseDown = false;
         let startX = 0;
         let scrollLeft = 0;
-        const hasOverflow = () => {
-            return slider.details.hasOverflow;
-        };
+        // add data attribute to container
+        slider.container.setAttribute('data-has-drag-scrolling', 'true');
         slider.container.addEventListener('mousedown', (e) => {
-            if (!hasOverflow()) {
+            if (!slider.details.hasOverflow) {
                 return;
             }
             isMouseDown = true;
@@ -547,6 +554,7 @@ function DragScrollingPlugin(args) {
             // change cursor to grabbing
             slider.container.style.cursor = 'grabbing';
             slider.container.style.scrollSnapType = 'none';
+            slider.container.style.scrollBehavior = 'auto';
             // prevent pointer events on the slides
             // const slides = slider.container.querySelectorAll( ':scope > *' );
             // slides.forEach((slide) => {
@@ -557,13 +565,15 @@ function DragScrollingPlugin(args) {
             // e.stopPropagation();
         });
         window.addEventListener('mouseup', () => {
-            if (!hasOverflow()) {
+            if (!slider.details.hasOverflow) {
                 return;
             }
             isMouseDown = false;
             slider.container.style.cursor = '';
-            slider.container.style.scrollSnapType = '';
+            // slider.container.style.scrollBehavior = slider.options.scrollBehavior;
             setTimeout(() => {
+                slider.container.style.scrollSnapType = '';
+                slider.container.style.scrollBehavior = '';
                 const slides = slider.container.querySelectorAll(':scope > *');
                 slides.forEach((slide) => {
                     slide.style.pointerEvents = '';
@@ -571,7 +581,7 @@ function DragScrollingPlugin(args) {
             }, 50);
         });
         window.addEventListener('mousemove', (e) => {
-            if (!hasOverflow()) {
+            if (!slider.details.hasOverflow) {
                 return;
             }
             if (!isMouseDown) {

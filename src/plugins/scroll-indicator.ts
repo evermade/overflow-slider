@@ -116,13 +116,14 @@ export default function ScrollIndicatorPlugin( args: { [key: string]: any } ) {
 		});
 
 		// make scrollbar button draggable via mouse/touch and update the scroll position
-		let isMouseDown = false;
+		let isInteractionDown = false;
 		let startX = 0;
 		let scrollLeft = 0;
 
-		scrollbarButton.addEventListener('mousedown', (e) => {
-			isMouseDown = true;
-			startX = e.pageX - scrollbarContainer.offsetLeft;
+		const onInteractionDown = (e: MouseEvent | TouchEvent) => {
+			isInteractionDown = true;
+			const pageX = (e as MouseEvent).pageX || (e as TouchEvent).touches[0].pageX;
+			startX = pageX - scrollbarContainer.offsetLeft;
 			scrollLeft = slider.container.scrollLeft;
 			// change cursor to grabbing
 			scrollbarButton.style.cursor = 'grabbing';
@@ -131,22 +132,35 @@ export default function ScrollIndicatorPlugin( args: { [key: string]: any } ) {
 
 			e.preventDefault();
 			e.stopPropagation();
-		});
-		window.addEventListener('mouseup', () => {
-			isMouseDown = false;
-			scrollbarButton.style.cursor = '';
-			slider.container.style.scrollSnapType = '';
-			scrollbarButton.setAttribute( 'data-is-grabbed', 'false' );
-		});
-		window.addEventListener('mousemove', (e) => {
-			if (!isMouseDown) {
+		};
+
+		const onInteractionMove = (e: MouseEvent | TouchEvent) => {
+			if (!isInteractionDown) {
 				return;
 			}
 			e.preventDefault();
-			const x = e.pageX - scrollbarContainer.offsetLeft;
+			const pageX = (e as MouseEvent).pageX || (e as TouchEvent).touches[0].pageX;
+			const x = pageX - scrollbarContainer.offsetLeft;
 			const scrollingFactor = slider.container.scrollWidth / scrollbarContainer.offsetWidth;
 			const walk = (x - startX) * scrollingFactor;
 			slider.container.scrollLeft = scrollLeft + walk;
-		});
+		};
+
+		const onInteractionUp = () => {
+			isInteractionDown = false;
+			scrollbarButton.style.cursor = '';
+			slider.container.style.scrollSnapType = '';
+			scrollbarButton.setAttribute( 'data-is-grabbed', 'false' );
+		};
+
+		scrollbarButton.addEventListener('mousedown', onInteractionDown);
+		scrollbarButton.addEventListener('touchstart', onInteractionDown);
+
+		window.addEventListener('mousemove', onInteractionMove);
+		window.addEventListener('touchmove', onInteractionMove, { passive: false });
+
+		window.addEventListener('mouseup', onInteractionUp);
+		window.addEventListener('touchend', onInteractionUp);
+
 	};
 }

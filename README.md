@@ -12,6 +12,18 @@ Overflow Slider aims to be lightweight, mobile-first and accessible. It is desig
 
 ### Usage
 
+Markup:
+
+```html
+<div class="overflow-slider">
+	<div>Slide 1</div>
+	<div>Slide 2</div>
+	<div>Slide 3</div>
+</div>
+```
+
+You don't have to use even class `overflow-slider` and slides can be whatever elements like `<a>`, `<li>`, or `article`.
+
 If you’re using a bundler (such as Webpack or Rollup), you can install through npm:
 
 ```bash
@@ -90,6 +102,40 @@ You can import base styles from the library to get started. The base styles incl
 You can use the CSS variables to override some values easily.
 
 Note that you can easily write styles from scratch if you want to. See source code from `src/overflow-slider.scss` for reference.
+
+## Known issues
+
+### Drag Scrolling and Firefox
+
+Drag scrolling does not work very well in Firefox when slides are clikable. We are working on a fix for this if that is possible.
+
+## Limitations
+
+### Vertical scrolling
+
+The library is designed to work with horizontal scrolling. Vertical scrolling is not supported and likely never will because it is not a common use case for sliders.
+
+### RTL support
+
+RTL support is not implemented yet. In case need arises it can be implemented but requires changes to the core and plugins.
+
+### Looping slides
+
+Looping slides is not supported and likely never will be. It is a feature that is not very common and it is not very accessible.
+
+### Auto-play
+
+Auto-play is not supported at the moment but can probably be implemented as a plugin. It is not very accessible and should be avoided if possible.
+
+## Changelog
+
+### 1.1.0
+
+* Add: Grab cursor when hovering slider that has DragScrollingPlugin
+* Add: Example of using entrance and exit animations for slides
+* Fix: ScrollIndicatorPlugin dragging works now with touch
+* Fix: Hide native scrollbar also in Firefox + Edge
+* Docs: Add more info on required markup and limitations
 
 ## Development
 
