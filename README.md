@@ -129,6 +129,11 @@ Auto-play is not supported at the moment but can probably be implemented as a pl
 
 ## Changelog
 
+### 2.0.0
+
+* Breaking: Separate plugins to their own imports
+* Fix: DragScrollingPlugin dragging outside of container bugs in Firefox/Safari
+
 ### 1.1.0
 
 * Add: Grab cursor when hovering slider that has DragScrollingPlugin

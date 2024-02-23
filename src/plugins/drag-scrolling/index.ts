@@ -18,10 +18,14 @@ export default function DragScrollingPlugin( args: { [key: string]: any } ) {
 		// add data attribute to container
 		slider.container.setAttribute( 'data-has-drag-scrolling', 'true' );
 
-		slider.container.addEventListener('mousedown', (e) => {
+		window.addEventListener('mousedown', (e) => {
 			if ( ! slider.details.hasOverflow ) {
 				return;
 			}
+			if ( ! slider.container.contains( e.target as Node ) ) {
+				return;
+			}
+
 			isMouseDown = true;
 			startX = e.pageX - slider.container.offsetLeft;
 			scrollLeft = slider.container.scrollLeft;
