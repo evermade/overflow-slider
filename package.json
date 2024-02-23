@@ -27,9 +27,17 @@
 			"import": "./dist/plugins/arrows/arrows/index.esm.js",
 			"require": "./dist/plugins/arrows/arrows/index.min.js"
 		},
+		"./plugins/full-width": {
+			"import": "./dist/plugins/full-width/full-width/index.esm.js",
+			"require": "./dist/plugins/full-width/full-width/index.min.js"
+		},
 		"./plugins/dots": {
 			"import": "./dist/plugins/dots/dots/index.esm.js",
 			"require": "./dist/plugins/dots/dots/index.min.js"
+		},
+		"./plugins/thumbnails": {
+			"import": "./dist/plugins/thumbnails/thumbnails/index.esm.js",
+			"require": "./dist/plugins/thumbnails/thumbnails/index.min.js"
 		}
 	},
 	"repository": {

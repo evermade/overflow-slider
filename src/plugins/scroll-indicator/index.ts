@@ -53,8 +53,8 @@ export default function ScrollIndicatorPlugin( args: { [key: string]: any } ) {
 		setDataAttributes();
 
 		const getScrollbarButtonLeftOffset = () => {
-			const scrollbarRatio = slider.container.offsetWidth / slider.container.scrollWidth;
-			return slider.container.scrollLeft * scrollbarRatio;
+			const  contentRatio = scrollbarButton.offsetWidth / slider.details.containerWidth;
+			return slider.container.scrollLeft * contentRatio;
 		};
 
 		// scrollbarbutton width and position is calculated based on the scroll position and available width
@@ -65,7 +65,8 @@ export default function ScrollIndicatorPlugin( args: { [key: string]: any } ) {
 			}
 
 			requestId = window.requestAnimationFrame(() => {
-				const scrollbarButtonWidth = (slider.container.offsetWidth / slider.container.scrollWidth) * 100;
+				const scrollbarButtonWidth = (slider.details.containerWidth / slider.details.scrollableAreaWidth) * 100;
+
 				const scrollLeftInPortion = getScrollbarButtonLeftOffset();
 				scrollbarButton.style.width = `${scrollbarButtonWidth}%`;
 				scrollbarButton.style.transform = `translateX(${scrollLeftInPortion}px)`;
@@ -141,7 +142,8 @@ export default function ScrollIndicatorPlugin( args: { [key: string]: any } ) {
 			e.preventDefault();
 			const pageX = (e as MouseEvent).pageX || (e as TouchEvent).touches[0].pageX;
 			const x = pageX - scrollbarContainer.offsetLeft;
-			const scrollingFactor = slider.container.scrollWidth / scrollbarContainer.offsetWidth;
+			const scrollingFactor = slider.details.scrollableAreaWidth / scrollbarContainer.offsetWidth;
+
 			const walk = (x - startX) * scrollingFactor;
 			slider.container.scrollLeft = scrollLeft + walk;
 		};

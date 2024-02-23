@@ -33,14 +33,12 @@ npm install @evermade/oveflow-slider
 Import the `OverflowSlider` along with plugins you want to use.
 
 ```js
-import {
-	OverflowSlider,
-	DragScrollingPlugin,
-	SkipLinksPlugin,
-	ArrowsPlugin,
-	ScrollIndicatorPlugin,
-	DotsPlugin
-} from "@evermade/overflow-slider";
+import { OverflowSlider } from '@evermade/overflow-slider';
+import DragScrollingPlugin from '@evermade/overflow-slider/plugins/drag-scrolling';
+import SkipLinksPlugin from '@evermade/overflow-slider/plugins/skip-links';
+import ArrowsPlugin from '@evermade/overflow-slider/plugins/arrows';
+import ScrollIndicatorPlugin from '@evermade/overflow-slider/plugins/scroll-indicator';
+import DotsPlugin from '@evermade/overflow-slider/plugins/dots';
 
 // minimal example
 const minimalSlider = new OverflowSlider(
@@ -105,9 +103,9 @@ Note that you can easily write styles from scratch if you want to. See source co
 
 ## Known issues
 
-### Drag Scrolling and Firefox
+### Drag Scrolling and Smoothness
 
-Drag scrolling does not work very well in Firefox when slides are clikable. We are working on a fix for this if that is possible.
+Scroll snapping doesn't apply smoothly to drag scrolling. It might be browser limitation or some issue with implementation here. Should look into fixing it.
 
 ## Limitations
 
@@ -127,12 +125,29 @@ Looping slides is not supported and likely never will be. It is a feature that i
 
 Auto-play is not supported at the moment but can probably be implemented as a plugin. It is not very accessible and should be avoided if possible.
 
+## To-do
+
+* Make drag scrolling snapping smooth
+* Make moveToSlide method smooth
+* Rethink dot amount calculation
+* Maybe split styles to separate files for plugins (but keep offering bundle as well)
+* Maybe add plugin that adds class for visible slides
+* Document all plugins and their parameters here
+
 ## Changelog
 
 ### 2.0.0
 
-* Breaking: Separate plugins to their own imports
+* Breaking: Separate plugins to their own imports/files
+* Add: FullWidthPlugin to allow full width sliders
+* Add: ThumbnailsPlugin to show synchronized thumbnails
+* Add: Slider container 'data-ready' attribute when initialized to help writing CSS
+* Add: Support for optional separate containers for prev and next arrows
+* Add: Slides as array to Slider instance
+* Add: Active slide ID to Slider instance as activeSlideIdx and hook activeSlideChanged
+* Fix: DragScrollingPlugin dragging clickable slides in Firefox
 * Fix: DragScrollingPlugin dragging outside of container bugs in Firefox/Safari
+* Fix: ScrollIndicatorPlugin width calculation when scrollbar and container are not same width
 
 ### 1.1.0
 

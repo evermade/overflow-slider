@@ -13,12 +13,14 @@ const DEFAULT_CLASS_NAMES = {
 };
 function ArrowsPlugin(args) {
     return (slider) => {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e, _f;
         const options = {
             texts: Object.assign(Object.assign({}, DEFAULT_TEXTS), (args === null || args === void 0 ? void 0 : args.texts) || []),
             icons: Object.assign(Object.assign({}, DEFAULT_ICONS), (args === null || args === void 0 ? void 0 : args.icons) || []),
             classNames: Object.assign(Object.assign({}, DEFAULT_CLASS_NAMES), (args === null || args === void 0 ? void 0 : args.classNames) || []),
             container: (_a = args === null || args === void 0 ? void 0 : args.container) !== null && _a !== void 0 ? _a : null,
+            containerPrev: (_b = args === null || args === void 0 ? void 0 : args.containerPrev) !== null && _b !== void 0 ? _b : null,
+            containerNext: (_c = args === null || args === void 0 ? void 0 : args.containerNext) !== null && _c !== void 0 ? _c : null,
         };
         const nav = document.createElement('div');
         nav.classList.add(options.classNames.navContainer);
@@ -26,7 +28,7 @@ function ArrowsPlugin(args) {
         prev.setAttribute('class', options.classNames.prevButton);
         prev.setAttribute('type', 'button');
         prev.setAttribute('aria-label', options.texts.buttonPrevious);
-        prev.setAttribute('aria-controls', (_b = slider.container.getAttribute('id')) !== null && _b !== void 0 ? _b : '');
+        prev.setAttribute('aria-controls', (_d = slider.container.getAttribute('id')) !== null && _d !== void 0 ? _d : '');
         prev.setAttribute('data-type', 'prev');
         prev.innerHTML = options.icons.prev;
         prev.addEventListener('click', () => slider.moveToDirection('prev'));
@@ -34,7 +36,7 @@ function ArrowsPlugin(args) {
         next.setAttribute('class', options.classNames.nextButton);
         next.setAttribute('type', 'button');
         next.setAttribute('aria-label', options.texts.buttonNext);
-        next.setAttribute('aria-controls', (_c = slider.container.getAttribute('id')) !== null && _c !== void 0 ? _c : '');
+        next.setAttribute('aria-controls', (_e = slider.container.getAttribute('id')) !== null && _e !== void 0 ? _e : '');
         next.setAttribute('data-type', 'next');
         next.innerHTML = options.icons.next;
         next.addEventListener('click', () => slider.moveToDirection('next'));
@@ -58,11 +60,17 @@ function ArrowsPlugin(args) {
                 next.setAttribute('data-has-content', 'true');
             }
         };
-        if (options.container) {
-            options.container.appendChild(nav);
+        if (options.containerNext && options.containerPrev) {
+            options.containerPrev.appendChild(prev);
+            options.containerNext.appendChild(next);
         }
         else {
-            (_d = slider.container.parentNode) === null || _d === void 0 ? void 0 : _d.insertBefore(nav, slider.container.nextSibling);
+            if (options.container) {
+                options.container.appendChild(nav);
+            }
+            else {
+                (_f = slider.container.parentNode) === null || _f === void 0 ? void 0 : _f.insertBefore(nav, slider.container.nextSibling);
+            }
         }
         update();
         slider.on('scroll', update);

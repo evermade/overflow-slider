@@ -1,4 +1,5 @@
 function details(slider) {
+    var _a;
     let instance;
     let hasOverflow = false;
     let slideCount = 0;
@@ -9,7 +10,7 @@ function details(slider) {
     if (slider.container.scrollWidth > slider.container.clientWidth) {
         hasOverflow = true;
     }
-    slideCount = Array.from(slider.container.querySelectorAll(slider.options.slidesSelector)).length;
+    slideCount = (_a = slider.slides.length) !== null && _a !== void 0 ? _a : 0;
     containerWidth = slider.container.offsetWidth;
     scrollableAreaWidth = slider.container.scrollWidth;
     amountOfPages = Math.ceil(scrollableAreaWidth / containerWidth);

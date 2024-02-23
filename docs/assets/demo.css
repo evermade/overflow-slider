@@ -94,7 +94,7 @@ textarea {
 }
 
 body {
-	background-color: #f7f7f7;
+	background-color: #fff;
 }
 
 a {
@@ -104,8 +104,7 @@ a {
 }
 
 a:hover,
-a:focus-visible,
-a:active {
+a:focus-visible {
 	color: var(--color-primary);
 }
 
@@ -366,9 +365,9 @@ h3:before {
    Content
 =========================================================================== */
 
-.example-container {
-	gap: var(--slide-gap);
+.overflow-slider {
 	margin-top: 1.5rem;
+	gap: 1rem;
 }
 
 .example-item {
@@ -528,4 +527,133 @@ h3:before {
 	fill: var(--color-grey-800);
 	width: 1.625rem !important;
 	height: 1.625rem !important;
+}
+
+/* ===========================================================================
+  Example 4: Filters
+=========================================================================== */
+
+.example-4-filters-wrapper {
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+	margin-top: 1.5rem;
+	position: relative;
+}
+
+.example-container-4-filters {
+	gap: .75rem;
+	margin: 0;
+}
+
+.example-4-filters-previous,
+.example-4-filters-next {
+	transition: .1s ease-in-out;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: var(--example-4-arrow-size);
+	display: flex;
+	align-items: center;
+	background: #fff;
+	padding-inline: .5rem;
+}
+
+.example-4-filters-previous {
+	left: 0;
+}
+
+.example-4-filters-next {
+	right: 0;
+}
+
+.example-4-filters-previous:has([data-has-content="false"]),
+.example-4-filters-next:has([data-has-content="false"]) {
+	opacity: 0;
+	pointer-events: none;
+	visibility: hidden;
+}
+
+.example-filter {
+	padding: .5rem 1rem;
+	border-radius: 2rem;
+	background: var(--color-grey-100);
+	cursor: pointer;
+	color: var(--color-grey-800);
+	white-space: nowrap;
+	text-decoration: none;
+}
+
+.example-filter:hover,
+.example-filter:focus-visible {
+	background: var(--color-grey-800);
+	color: var(--color-white);
+}
+
+/* ===========================================================================
+  Example 4: Grid On Desktop
+=========================================================================== */
+
+@media (min-width: 768px) {
+	.example-container-4-grid-or-slider {
+		width: 100%;
+		max-width: 100%;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-auto-flow: row;
+		overflow: clip;
+	}
+
+	.example-container-4-grid-or-slider .example-item {
+		width: 100%;
+	}
+}
+
+/* ===========================================================================
+  Example 4: Full Width
+=========================================================================== */
+
+.example-container-4-full-width {
+	width: 100vw;
+	margin-left: calc(-50vw + 50%);
+}
+
+/* ===========================================================================
+  Example 4: Synced Sliders
+=========================================================================== */
+
+.example-container-4-thumbnails-wrapper {
+
+}
+
+.example-container-4-synced-main {
+	grid-template-columns: repeat(var(--slider-slides-count, 1), var(--slider-container-width, 900px));
+	scroll-snap-type: x mandatory;
+}
+
+.example-container-4-synced-main .example-item {
+	aspect-ratio: 16/8;
+	width: 100%;
+	max-width: 100%;
+}
+
+.example-container-4-synced-thumbnails {
+	scroll-snap-type: x proximity;
+}
+
+.example-container-4-synced-thumbnails .example-item {
+	aspect-ratio: 1/1;
+	font-size: 1.5rem;
+	width: 120px;
+	opacity: .5;
+	cursor: pointer;
+}
+
+.example-container-4-synced-thumbnails .example-item:hover {
+	opacity: .875;
+}
+
+.example-container-4-synced-thumbnails .example-item[aria-current="true"] {
+	opacity: 1 !important;
+	background: var(--color-grey-800);
+	color: #fff;
 }

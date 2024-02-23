@@ -16,6 +16,8 @@ import SkipLinksPlugin from '../dist/plugins/skip-links/skip-links/index.esm.js'
 import ArrowsPlugin from '../dist/plugins/arrows/arrows/index.esm.js';
 import ScrollIndicatorPlugin from '../dist/plugins/scroll-indicator/scroll-indicator/index.esm.js';
 import DotsPlugin from '../dist/plugins/dots/dots/index.esm.js';
+import FullWidthPlugin from '../dist/plugins/full-width/full-width/index.esm.js';
+import ThumbnailsPlugin from '../dist/plugins/thumbnails/thumbnails/index.esm.js';
 
 (function () {
 	const init = () => {
@@ -137,6 +139,71 @@ import DotsPlugin from '../dist/plugins/dots/dots/index.esm.js';
 			]
 		);
 		console.log( '3-entrance-animation', example3EntranceAnimation );
+
+		const example4Filters = new OverflowSlider(
+			document.querySelector( '.example-container-4-filters' ),
+			{},
+			[
+				DragScrollingPlugin(),
+				ArrowsPlugin({
+					containerPrev: document.querySelector( '.example-4-filters-previous' ),
+					containerNext: document.querySelector( '.example-4-filters-next' ),
+				})
+			]
+		);
+		console.log( '4-filters', example4Filters );
+
+		const example4GridOrSliders = new OverflowSlider(
+			document.querySelector( '.example-container-4-grid-or-slider' ),
+			{},
+			[
+				DragScrollingPlugin(),
+				ScrollIndicatorPlugin(),
+			]
+		);
+		console.log( '4-grid-or-slider', example4GridOrSliders );
+
+		const example4FullWidth = new OverflowSlider(
+			document.querySelector( '.example-container-4-full-width' ),
+			{},
+			[
+				DragScrollingPlugin(),
+				FullWidthPlugin(
+					{
+						targetWidth: (slider) => {
+							// copy the width of the parent element
+							return slider.container.parentElement.clientWidth;
+						}
+					}
+				),
+				ScrollIndicatorPlugin(),
+			]
+		);
+		console.log( '4-full-width', example4FullWidth );
+
+		const example4SyncedMain = new OverflowSlider(
+			document.querySelector( '.example-container-4-synced-main' ),
+			{},
+			[
+				DragScrollingPlugin(),
+			]
+		);
+		console.log( '4-synced-main', example4SyncedMain );
+
+		const example4SyncedThumbnails = new OverflowSlider(
+			document.querySelector( '.example-container-4-synced-thumbnails' ),
+			{},
+			[
+				DragScrollingPlugin(),
+				ThumbnailsPlugin({
+					mainSlider: example4SyncedMain,
+				}),
+			]
+		);
+		console.log( '4-synced-thumbnails', example4SyncedThumbnails );
+
+
+
 	};
 
 	init();

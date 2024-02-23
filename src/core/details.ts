@@ -15,7 +15,7 @@ export default function details( slider: Slider) {
 		hasOverflow = true;
 	}
 
-	slideCount = Array.from(slider.container.querySelectorAll(slider.options.slidesSelector)).length;
+	slideCount = slider.slides.length ?? 0;
 
 	containerWidth = slider.container.offsetWidth;
 

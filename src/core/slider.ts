@@ -14,8 +14,14 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 			containerId = generateId( 'overflow-slider' );
 			container.setAttribute( 'id', containerId );
 		}
+		setSlides();
 		setDetails(true);
-		slider.on('contentsChanged', () => setDetails());
+		setActiveSlideIdx();
+		slider.on('contentsChanged', () => {
+			setSlides();
+			setDetails();
+			setActiveSlideIdx();
+		});
 		slider.on('containerSizeChanged', () => setDetails());
 
 		let requestId = 0;
@@ -25,6 +31,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 			}
 			requestId = window.requestAnimationFrame(() => {
 				setDetails();
+				setActiveSlideIdx();
 			});
 		};
 		slider.on('scroll', setDetailsDebounce);
@@ -55,6 +62,10 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 			slider.emit('detailsChanged');
 		}
 	};
+
+	function setSlides() {
+		slider.slides = Array.from(slider.container.querySelectorAll(slider.options.slidesSelector));
+	}
 
 	function addEventListeners() {
 
@@ -120,8 +131,10 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 			scrollTarget = slideStart;
 		} else if (slideEnd > scrollLeft + containerWidth) {
 			scrollTarget = slideEnd - containerWidth;
+		} else if (slideStart === 0) {
+			scrollTarget = 0;
 		}
-		if (scrollTarget) {
+		if (scrollTarget !== null) {
 			slider.container.style.scrollSnapType = 'none';
 			slider.container.scrollLeft = scrollTarget;
 			// @todo resume scroll snapping but at least proximity gives a lot of trouble
@@ -129,6 +142,46 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 			// it back in case it's needed. We need to calculate scrollLeft some other way
 		}
 	};
+
+	function setActiveSlideIdx() {
+		const sliderRect = slider.container.getBoundingClientRect();
+		const scrollLeft = slider.container.scrollLeft;
+		const slides = slider.slides;
+		let activeSlideIdx = 0;
+
+		for (let i = 0; i < slides.length; i++) {
+			const slideRect = slides[i].getBoundingClientRect();
+			const slideStart = slideRect.left - sliderRect.left + scrollLeft + getGapSize();
+
+			if (slideStart > scrollLeft) {
+				activeSlideIdx = i;
+				break;
+			}
+		}
+
+		const oldActiveSlideIdx = slider.activeSlideIdx;
+		slider.activeSlideIdx = activeSlideIdx;
+		if (oldActiveSlideIdx !== activeSlideIdx) {
+			slider.emit('activeSlideChanged');
+		}
+	}
+
+	function moveToSlide( idx: number ) {
+		const slide = slider.slides[idx];
+		if (slide) {
+			ensureSlideIsInView(slide);
+		}
+	};
+
+	function getGapSize() : number {
+		let gapSize = 0;
+		if (slider.slides.length > 1) {
+			const firstSlideRect = slider.slides[0].getBoundingClientRect();
+			const secondSlideRect = slider.slides[1].getBoundingClientRect();
+			gapSize = secondSlideRect.left - firstSlideRect.right;
+		}
+		return gapSize;
+	}
 
 	function moveToDirection(direction = "prev") {
 		const scrollStrategy = slider.options.scrollStrategy;
@@ -143,26 +196,17 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		}
 		if (scrollStrategy === 'fullSlide') {
 			let fullSldeTargetScrollPosition = null;
-			const slides = Array.from(slider.container.querySelectorAll(slider.options.slidesSelector));
-
-			let gapSize = 0;
-
-			if (slides.length > 1) {
-				const firstSlideRect = slides[0].getBoundingClientRect();
-				const secondSlideRect = slides[1].getBoundingClientRect();
-				gapSize = secondSlideRect.left - firstSlideRect.right;
-			}
 
 			// extend targetScrollPosition to include gap
 			if (direction === 'prev') {
-				fullSldeTargetScrollPosition = Math.max(0, targetScrollPosition - gapSize);
+				fullSldeTargetScrollPosition = Math.max(0, targetScrollPosition - getGapSize());
 			} else {
-				fullSldeTargetScrollPosition = Math.min(slider.container.scrollWidth, targetScrollPosition + gapSize);
+				fullSldeTargetScrollPosition = Math.min(slider.container.scrollWidth, targetScrollPosition + getGapSize());
 			}
 
 			if (direction === 'next') {
 				let partialSlideFound = false;
-				for (let slide of slides) {
+				for (let slide of slider.slides) {
 					const slideRect = slide.getBoundingClientRect();
 					const slideStart = slideRect.left - sliderRect.left + scrollLeft;
 					const slideEnd = slideStart + slideRect.width;
@@ -180,7 +224,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 				}
 			} else {
 				let partialSlideFound = false;
-				for (let slide of slides) {
+				for (let slide of slider.slides) {
 					const slideRect = slide.getBoundingClientRect();
 					const slideStart = slideRect.left - sliderRect.left + scrollLeft;
 					const slideEnd = slideStart + slideRect.width;
@@ -225,6 +269,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 	slider = <Slider>{
 		emit,
 		moveToDirection,
+		moveToSlide,
 		on,
 		options,
 	};

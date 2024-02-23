@@ -31,6 +31,8 @@ export type ArrowsOptions = {
 		nextButton: string;
 	},
 	container: HTMLElement | null,
+	containerPrev: HTMLElement | null,
+	containerNext: HTMLElement | null,
 };
 
 export default function ArrowsPlugin( args: { [key: string]: any } ) {
@@ -50,6 +52,8 @@ export default function ArrowsPlugin( args: { [key: string]: any } ) {
 				...args?.classNames || []
 			},
 			container: args?.container ?? null,
+			containerPrev: args?.containerPrev ?? null,
+			containerNext: args?.containerNext ?? null,
 		};
 
 		const nav = document.createElement( 'div' );
@@ -93,10 +97,15 @@ export default function ArrowsPlugin( args: { [key: string]: any } ) {
 			}
 		};
 
-		if ( options.container ) {
-			options.container.appendChild( nav );
+		if ( options.containerNext && options.containerPrev ) {
+			options.containerPrev.appendChild( prev );
+			options.containerNext.appendChild( next );
 		} else {
-			slider.container.parentNode?.insertBefore( nav, slider.container.nextSibling );
+			if ( options.container ) {
+				options.container.appendChild( nav );
+			} else {
+				slider.container.parentNode?.insertBefore( nav, slider.container.nextSibling );
+			}
 		}
 
 		update();
