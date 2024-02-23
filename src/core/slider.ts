@@ -42,6 +42,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 			setCSSVariables();
 		});
 		slider.emit('created');
+		slider.container.setAttribute('data-ready', 'true');
 	};
 
 	function setDetails( isInit = false ) {
