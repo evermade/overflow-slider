@@ -1,0 +1,12 @@
+/* --------------------------------------------------------------
+# DragScrollingPlugin
+-------------------------------------------------------------- */
+
+[data-has-drag-scrolling] {
+	&[data-has-overflow="true"] {
+		// show grab cursor if has drag scrolling
+		cursor: grab;
+		// selecting text might make scrolling difficult
+		user-select: none;
+	}
+}

@@ -1,6 +1,6 @@
 import './overflow-slider.scss';
 
-import OverflowSlider from './overflow-slider';
+import OverflowSlider from './core/overflow-slider';
 
 export {
 	OverflowSlider,

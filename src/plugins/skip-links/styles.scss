@@ -1,0 +1,35 @@
+/* --------------------------------------------------------------
+# SkipLinksPlugin
+-------------------------------------------------------------- */
+
+// You need a .screen-reader-text class so something like this:
+
+// .screen-reader-text {
+// 	border: 0;
+// 	clip: rect(1px, 1px, 1px, 1px);
+// 	clip-path: inset(50%);
+// 	height: 1px;
+// 	margin: -1px;
+// 	overflow: hidden;
+// 	padding: 0;
+// 	position: absolute;
+// 	width: 1px;
+// 	word-wrap: normal !important;
+// 	&:focus {
+// 		background-color: #000;
+// 		clip: auto !important;
+// 		clip-path: none;
+// 		color: #fff;
+// 		display: block;
+// 		font-weight: 700;
+// 		height: auto;
+// 		outline-offset: -2px;
+// 		padding: 1rem 1.5rem;
+// 		text-decoration: none;
+// 		width: fit-content;
+// 		z-index: 100000;
+// 		position: relative;
+// 		margin-top: 1rem;
+// 		margin-bottom: 1rem;
+// 	}
+// }

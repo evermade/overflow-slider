@@ -1,1 +1,1 @@
-export { default as OverflowSlider } from './overflow-slider.esm.js';
+export { default as OverflowSlider } from './core/overflow-slider.esm.js';

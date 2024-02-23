@@ -43,7 +43,7 @@ const pluginEntries = {
 
 const baseOutput = {
 		preserveModules: true,
-		preserveModulesRoot: 'src/plugins',
+		preserveModulesRoot: 'src',
 };
 
 export default [

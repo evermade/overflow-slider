@@ -1,18 +1,21 @@
-// import {
-// 	OverflowSlider,
-// 	DragScrollingPlugin,
-// 	SkipLinksPlugin,
-// 	ArrowsPlugin,
-// 	ScrollIndicatorPlugin,
-// 	DotsPlugin
-// } from '../dist/overflow-slider.esm.js';
-
+/**
+ * Hello!
+ *
+ * This is not how you import files in real project. This is only done this way
+ * to make it work with the demo page that cannot import the package from npm.
+ *
+ * In a real project, you would do something like this:
+ *
+ * import { OverflowSlider } from '@overflow-slider/core';
+ * import DragScrollingPlugin from '@overflow-slider/plugins/drag-scrolling';
+ * import SkipLinksPlugin from '@overflow-slider/plugins/skip-links';
+ */
 import { OverflowSlider } from '../dist/index.esm.js';
-import DragScrollingPlugin from '../dist/plugins/drag-scrolling.esm.js';
-import SkipLinksPlugin from '../dist/plugins/skip-links.esm.js';
-import ArrowsPlugin from '../dist/plugins/arrows.esm.js';
-import ScrollIndicatorPlugin from '../dist/plugins/scroll-indicator.esm.js';
-import DotsPlugin from '../dist/plugins/dots.esm.js';
+import DragScrollingPlugin from '../dist/plugins/drag-scrolling/drag-scrolling/index.esm.js';
+import SkipLinksPlugin from '../dist/plugins/skip-links/skip-links/index.esm.js';
+import ArrowsPlugin from '../dist/plugins/arrows/arrows/index.esm.js';
+import ScrollIndicatorPlugin from '../dist/plugins/scroll-indicator/scroll-indicator/index.esm.js';
+import DotsPlugin from '../dist/plugins/dots/dots/index.esm.js';
 
 (function () {
 	const init = () => {
@@ -23,14 +26,24 @@ import DotsPlugin from '../dist/plugins/dots.esm.js';
 		console.log( '1-css', example1CSS );
 
 		const example1DragScrolling = new OverflowSlider(
-			document.querySelector( '.example-container-1-drag-scrolling' ),
+			document.querySelector( '.example-container-1-drag-scrolling-clickable' ),
 			{},
 			[
 				DragScrollingPlugin(),
 				SkipLinksPlugin(),
 			]
 		);
-		console.log( '1-drag-scrolling', example1DragScrolling );
+		console.log( '1-drag-scrolling-clickable', example1DragScrolling );
+
+		const example1DragScrollingNotClickable = new OverflowSlider(
+			document.querySelector( '.example-container-1-drag-scrolling-not-clickable' ),
+			{},
+			[
+				DragScrollingPlugin(),
+				SkipLinksPlugin(),
+			]
+		);
+		console.log( '1-drag-scrolling-not-clickable', example1DragScrollingNotClickable );
 
 		const example1Arrows = new OverflowSlider(
 			document.querySelector( '.example-container-1-arrows' ),

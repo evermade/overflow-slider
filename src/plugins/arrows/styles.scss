@@ -1,0 +1,29 @@
+/* --------------------------------------------------------------
+# ArrowsPlugin
+-------------------------------------------------------------- */
+
+:root {
+	--overflow-slider-arrows-size: 1.5rem;
+	--overflow-slider-arrows-gap: .5rem;
+	--overflow-slider-arrows-inactive-opacity: 0.5;
+}
+
+.overflow-slider__arrows {
+	display: flex;
+	gap: var(--overflow-slider-arrows-gap);
+}
+
+.overflow-slider__arrows-button {
+	display: flex;
+	align-items: center;
+	outline-offset: -2px;
+	cursor: pointer;
+	svg {
+		width: var(--overflow-slider-arrows-size);
+		height: var(--overflow-slider-arrows-size);
+
+	}
+	&[data-has-content="false"] {
+		opacity: var(--overflow-slider-arrows-inactive-opacity);
+	}
+}

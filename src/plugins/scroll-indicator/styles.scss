@@ -1,0 +1,59 @@
+/* --------------------------------------------------------------
+# ScrollIndicatorPlugin
+-------------------------------------------------------------- */
+
+:root {
+	--overflow-slider-scroll-indicator-button-height: 4px;
+	--overflow-slider-scroll-indicator-padding: 1rem;
+	--overflow-slider-scroll-indicator-button-color: hsla(0, 0%, 0%, 0.75);
+	--overflow-slider-scroll-indicator-bar-color: hsla(0, 0%, 0%, 0.25);
+}
+
+.overflow-slider__scroll-indicator {
+	width: 100%;
+	padding-block: var(--overflow-slider-scroll-indicator-padding);
+	cursor: pointer;
+	position: relative;
+	outline: 0;
+	&[data-has-overflow="false"] {
+		display: none;
+	}
+	&:focus-visible .overflow-slider__scroll-indicator-button {
+		outline: 2px solid;
+		outline-offset: 2px;
+	}
+}
+
+.overflow-slider__scroll-indicator-bar {
+	height: 2px;
+	background: var(--overflow-slider-scroll-indicator-bar-color);
+	width: 100%;
+	border-radius: 3px;
+	position: absolute;
+	top: 50%;
+	left: 0;
+	transform: translateY(-50%);
+}
+
+.overflow-slider__scroll-indicator-button {
+	height: var(--overflow-slider-scroll-indicator-button-height);
+	background: var(--overflow-slider-scroll-indicator-button-color);
+	position: absolute;
+	top: calc(50% - calc( var( --overflow-slider-scroll-indicator-button-height ) / 2 ));
+	left: 0;
+	border-radius: 3px;
+	cursor: grab;
+	&[data-is-grabbed="true"],
+	&:hover {
+		--overflow-slider-scroll-indicator-button-height: 6px;
+	}
+	// increase clickable area to fill container in y-axis
+	&::after {
+		content: '';
+		display: block;
+		position: absolute;
+		top: calc(-1 * var(--overflow-slider-scroll-indicator-padding));
+		bottom: calc(-1 * var(--overflow-slider-scroll-indicator-padding));
+		width: 100%;
+	}
+}

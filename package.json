@@ -9,7 +9,27 @@
 	"exports": {
 		".": {
 			"import": "./dist/index.esm.js",
-			"require": "./dist/index.js"
+			"require": "./dist/index.min.js"
+		},
+		"./plugins/drag-scrolling": {
+			"import": "./dist/plugins/drag-scrolling/drag-scrolling/index.esm.js",
+			"require": "./dist/plugins/drag-scrolling/drag-scrolling/index.min.js"
+		},
+		"./plugins/skip-links": {
+			"import": "./dist/plugins/skip-links/skip-links/index.esm.js",
+			"require": "./dist/plugins/skip-links/skip-links/index.min.js"
+		},
+		"./plugins/scroll-indicator": {
+			"import": "./dist/plugins/scroll-indicator/scroll-indicator/index.esm.js",
+			"require": "./dist/plugins/scroll-indicator/scroll-indicator/index.min.js"
+		},
+		"./plugins/arrows": {
+			"import": "./dist/plugins/arrows/arrows/index.esm.js",
+			"require": "./dist/plugins/arrows/arrows/index.min.js"
+		},
+		"./plugins/dots": {
+			"import": "./dist/plugins/dots/dots/index.esm.js",
+			"require": "./dist/plugins/dots/dots/index.min.js"
 		}
 	},
 	"repository": {
