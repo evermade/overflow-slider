@@ -1,4 +1,4 @@
-import Slider from './core/slider.esm.js';
+import Slider from './core/slider.js';
 
 function OverflowSlider(container, options, plugins) {
     try {

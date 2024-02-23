@@ -1,11 +1,18 @@
-import {
-	OverflowSlider,
-	DragScrollingPlugin,
-	SkipLinksPlugin,
-	ArrowsPlugin,
-	ScrollIndicatorPlugin,
-	DotsPlugin
-} from '../dist/overflow-slider.esm.js';
+// import {
+// 	OverflowSlider,
+// 	DragScrollingPlugin,
+// 	SkipLinksPlugin,
+// 	ArrowsPlugin,
+// 	ScrollIndicatorPlugin,
+// 	DotsPlugin
+// } from '../dist/overflow-slider.esm.js';
+
+import { OverflowSlider } from '../dist/index.esm.js';
+import DragScrollingPlugin from '../dist/plugins/drag-scrolling.esm.js';
+import SkipLinksPlugin from '../dist/plugins/skip-links.esm.js';
+import ArrowsPlugin from '../dist/plugins/arrows.esm.js';
+import ScrollIndicatorPlugin from '../dist/plugins/scroll-indicator.esm.js';
+import DotsPlugin from '../dist/plugins/dots.esm.js';
 
 (function () {
 	const init = () => {
