@@ -9,7 +9,7 @@ function details(slider) {
     if (slider.container.scrollWidth > slider.container.clientWidth) {
         hasOverflow = true;
     }
-    slideCount = Array.from(slider.container.querySelectorAll(':scope > *')).length;
+    slideCount = Array.from(slider.container.querySelectorAll(slider.options.slidesSelector)).length;
     containerWidth = slider.container.offsetWidth;
     scrollableAreaWidth = slider.container.scrollWidth;
     amountOfPages = Math.ceil(scrollableAreaWidth / containerWidth);

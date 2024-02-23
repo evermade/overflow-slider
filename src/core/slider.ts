@@ -142,7 +142,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		}
 		if (scrollStrategy === 'fullSlide') {
 			let fullSldeTargetScrollPosition = null;
-			const slides = Array.from(slider.container.querySelectorAll(':scope > *'));
+			const slides = Array.from(slider.container.querySelectorAll(slider.options.slidesSelector));
 
 			let gapSize = 0;
 

@@ -9,6 +9,7 @@ function OverflowSlider(container, options, plugins) {
         const defaults = {
             scrollBehavior: "smooth",
             scrollStrategy: "fullSlide",
+            slidesSelector: ":scope > *",
         };
         const sliderOptions = Object.assign(Object.assign({}, defaults), options);
         // disable smooth scrolling if user prefers reduced motion

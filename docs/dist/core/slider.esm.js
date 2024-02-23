@@ -130,7 +130,7 @@ function Slider(container, options, plugins) {
         }
         if (scrollStrategy === 'fullSlide') {
             let fullSldeTargetScrollPosition = null;
-            const slides = Array.from(slider.container.querySelectorAll(':scope > *'));
+            const slides = Array.from(slider.container.querySelectorAll(slider.options.slidesSelector));
             let gapSize = 0;
             if (slides.length > 1) {
                 const firstSlideRect = slides[0].getBoundingClientRect();

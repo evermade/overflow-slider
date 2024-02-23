@@ -15,6 +15,7 @@ export type Slider<O = {}, C = {}, H extends string = string> = {
 export type SliderOptions = {
 	scrollBehavior: string;
 	scrollStrategy: string;
+	slidesSelector: string;
 	[key: string]: any;
 }
 

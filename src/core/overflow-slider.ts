@@ -20,6 +20,7 @@ export default function OverflowSlider (
 		const defaults = {
 			scrollBehavior: "smooth",
 			scrollStrategy: "fullSlide",
+			slidesSelector: ":scope > *",
 		};
 
 		const sliderOptions = { ...defaults, ...options };
