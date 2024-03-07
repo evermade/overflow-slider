@@ -1,6 +1,6 @@
 {
 	"name": "@evermade/overflow-slider",
-	"version": "2.0.1",
+	"version": "2.0.2",
 	"description": "Accessible slider tha works with overflow: auto.",
 	"type": "module",
 	"main": "dist/index.js",
@@ -38,7 +38,8 @@
 		"./plugins/thumbnails": {
 			"import": "./dist/plugins/thumbnails/thumbnails/index.esm.js",
 			"require": "./dist/plugins/thumbnails/thumbnails/index.min.js"
-		}
+		},
+		"./style.css": "./dist/overflow-slider.css"
 	},
 	"repository": {
 		"type": "git",

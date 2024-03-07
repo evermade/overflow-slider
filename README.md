@@ -94,7 +94,7 @@ const slider = new OverflowSlider(
 You can import base styles from the library to get started. The base styles include basic styles for the slider and some plugins.
 
 ```scss
-@import "@evermade/overflow-slider/dist/overflow-slider.css";
+@import "@evermade/overflow-slider/style.css";
 ```
 
 You can use the CSS variables to override some values easily.
@@ -134,6 +134,10 @@ Auto-play is not supported at the moment but can probably be implemented as a pl
 * Document all plugins and their parameters here
 
 ## Changelog
+
+### 2.0.2
+
+* Fix: Import style.css from correct path
 
 ### 2.0.1
 
