@@ -27,7 +27,7 @@ You don't have to use even class `overflow-slider` and slides can be whatever el
 If you’re using a bundler (such as Webpack or Rollup), you can install through npm:
 
 ```bash
-npm install @evermade/oveflow-slider
+npm install @evermade/overflow-slider
 ```
 
 Import the `OverflowSlider` along with plugins you want to use.
@@ -127,14 +127,18 @@ Auto-play is not supported at the moment but can probably be implemented as a pl
 
 ## To-do
 
-* Make drag scrolling snapping smooth
-* Make moveToSlide method smooth
+* Make drag scrolling snapping smooth (might be browser limitation)
 * Rethink dot amount calculation
 * Maybe split styles to separate files for plugins (but keep offering bundle as well)
 * Maybe add plugin that adds class for visible slides
 * Document all plugins and their parameters here
 
 ## Changelog
+
+### 2.0.1
+
+* Fix: Smooth scrolling for moveToSlide method
+* Fix: Prev arrow sometimes leaving visible although there are no more slides to scroll to
 
 ### 2.0.0
 

@@ -101,7 +101,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 						break;
 					}
 				}
-				ensureSlideIsInView(target);
+				ensureSlideIsInView(target, 'auto');
 			}
 			wasInteractedWith = false;
 		});
@@ -119,7 +119,8 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		slider.container.setAttribute('data-has-overflow', slider.details.hasOverflow ? 'true' : 'false');
 	}
 
-	function ensureSlideIsInView( slide: HTMLElement ) {
+	function ensureSlideIsInView( slide: HTMLElement, scrollBehavior: null|ScrollBehavior = null) {
+		const behavior = scrollBehavior || slider.options.scrollBehavior as ScrollBehavior;
 		const slideRect = slide.getBoundingClientRect();
 		const sliderRect = slider.container.getBoundingClientRect();
 		const containerWidth = slider.container.offsetWidth;
@@ -136,10 +137,17 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		}
 		if (scrollTarget !== null) {
 			slider.container.style.scrollSnapType = 'none';
-			slider.container.scrollLeft = scrollTarget;
-			// @todo resume scroll snapping but at least proximity gives a lot of trouble
-			// and it's not really needed for this use case but it would be nice to have
-			// it back in case it's needed. We need to calculate scrollLeft some other way
+			// seems like in order for scroll behavior: smooth to work, we need to wait a bit to disable scrollSnapType
+			setTimeout((scrollTarget) => {
+				slider.container.scrollTo({ left: scrollTarget, behavior: behavior });
+			}, 50, scrollTarget);
+			setTimeout(() => {
+				// leave snapping off to fix issues with slide moving back on focus
+				if ( behavior == 'smooth' ) {
+					slider.container.style.scrollSnapType = '';
+				}
+
+			}, 500);
 		}
 	};
 

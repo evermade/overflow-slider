@@ -47,13 +47,14 @@ function ArrowsPlugin(args) {
             const scrollLeft = slider.container.scrollLeft;
             const scrollWidth = slider.container.scrollWidth;
             const clientWidth = slider.container.clientWidth;
+            const buffer = 1;
             if (scrollLeft === 0) {
                 prev.setAttribute('data-has-content', 'false');
             }
             else {
                 prev.setAttribute('data-has-content', 'true');
             }
-            if (scrollLeft + clientWidth >= scrollWidth) {
+            if (scrollLeft + clientWidth >= scrollWidth - buffer) {
                 next.setAttribute('data-has-content', 'false');
             }
             else {
