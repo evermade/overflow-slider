@@ -34,6 +34,7 @@ export default function FullWidthPlugin( args: { [key: string]: any } ) {
 			if ( options.addMarginAfter ) {
 				lastSlide.style.marginRight = `${marginAmount}px`;
 			}
+			slider.container.setAttribute( 'data-full-width-offset', marginAmount.toString() );
 		};
 
 		update();

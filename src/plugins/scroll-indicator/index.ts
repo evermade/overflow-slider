@@ -128,7 +128,6 @@ export default function ScrollIndicatorPlugin( args: { [key: string]: any } ) {
 			scrollLeft = slider.container.scrollLeft;
 			// change cursor to grabbing
 			scrollbarButton.style.cursor = 'grabbing';
-			slider.container.style.scrollSnapType = 'none';
 			scrollbarButton.setAttribute( 'data-is-grabbed', 'true' );
 
 			e.preventDefault();
@@ -151,7 +150,6 @@ export default function ScrollIndicatorPlugin( args: { [key: string]: any } ) {
 		const onInteractionUp = () => {
 			isInteractionDown = false;
 			scrollbarButton.style.cursor = '';
-			slider.container.style.scrollSnapType = '';
 			scrollbarButton.setAttribute( 'data-is-grabbed', 'false' );
 		};
 

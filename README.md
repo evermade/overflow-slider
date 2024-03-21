@@ -127,13 +127,23 @@ Auto-play is not supported at the moment but can probably be implemented as a pl
 
 ## To-do
 
-* Make drag scrolling snapping smooth (might be browser limitation)
-* Rethink dot amount calculation
 * Maybe split styles to separate files for plugins (but keep offering bundle as well)
 * Maybe add plugin that adds class for visible slides
 * Document all plugins and their parameters here
 
 ## Changelog
+
+### 3.0.0
+
+* Breaking: Change dot plugin to calculate dots based on slides instead of container width "pages"
+* Add: FadePlugin to hint that there are more slides to scroll to
+* Add: Scroll snap emulation method
+* Add: Scroll snap emulation for DragScrollingPlugin
+* Add: Hooks for different types of scrolling (any, native, programmatic)
+* Add: Hooks for different states of scrolling (start, scroll, end) for above types
+* Refactor: Scroll snapping exceptions to be handled by the core slider
+* Fix: Enhance performance by hooking some plugins only when scrolling has ended
+* Fix: Full width alignment to take into account the container offset
 
 ### 2.0.2
 

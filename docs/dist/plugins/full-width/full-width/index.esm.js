@@ -21,6 +21,7 @@ function FullWidthPlugin(args) {
             if (options.addMarginAfter) {
                 lastSlide.style.marginRight = `${marginAmount}px`;
             }
+            slider.container.setAttribute('data-full-width-offset', marginAmount.toString());
         };
         update();
         slider.on('contentsChanged', update);

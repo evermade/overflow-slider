@@ -446,6 +446,21 @@ h3:before {
 .example-container-2-perfect-fit {
 	grid-template-columns: repeat(var(--slider-slides-count, 1), calc( ( var(--slider-container-width, 900px) / 3 ) - 2/3 * var(--slide-gap, 1rem)));
 }
+.example-container-1-dots {
+	scroll-snap-type: x mandatory;
+	grid-template-columns: repeat(var(--slider-slides-count, 1), var(--slider-container-width, 900px));
+}
+
+.example-container-1-dots .example-item {
+	aspect-ratio: 16/7;
+	width: 100%;
+}
+
+.example-container-1-fade-wrap {
+	position: relative;
+}
+
+
 .example-container-2-perfect-fit .example-item {
 	aspect-ratio: 1/1;
 	width: 100%;
@@ -557,6 +572,7 @@ h3:before {
 	align-items: center;
 	background: #fff;
 	padding-inline: .5rem;
+	z-index: 1;
 }
 
 .example-4-filters-previous {

@@ -1,0 +1,27 @@
+/* --------------------------------------------------------------
+# FadePlugin
+-------------------------------------------------------------- */
+
+:root {
+	--overflow-slider-fade-color: #fff;
+	--overflow-slider-fade-width: 3rem;
+}
+
+.overflow-slider-fade {
+	position: absolute;
+	top: 0;
+	width: var(--overflow-slider-fade-width);
+	height: 100%;
+	pointer-events: none;
+	z-index: 1;
+}
+
+.overflow-slider-fade--start {
+	left: 0;
+	background: linear-gradient(to right, var(--overflow-slider-fade-color) 0%, transparent 100%);
+}
+
+.overflow-slider-fade--end {
+	right: 0;
+	background: linear-gradient(to left, var(--overflow-slider-fade-color) 0%, transparent 100%);
+}

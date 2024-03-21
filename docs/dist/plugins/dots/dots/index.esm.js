@@ -20,8 +20,8 @@ function DotsPlugin(args) {
             dots.setAttribute('data-has-content', slider.details.hasOverflow.toString());
             dots.innerHTML = '';
             const dotsList = document.createElement('ul');
-            const pages = slider.details.amountOfPages;
-            const currentPage = slider.details.currentPage;
+            const pages = slider.details.slideCount;
+            const currentItem = slider.activeSlideIdx;
             if (pages <= 1) {
                 return;
             }
@@ -31,23 +31,23 @@ function DotsPlugin(args) {
                 dot.setAttribute('type', 'button');
                 dot.setAttribute('class', options.classNames.dotsItem);
                 dot.setAttribute('aria-label', options.texts.dotDescription.replace('%d', (i + 1).toString()).replace('%d', pages.toString()));
-                dot.setAttribute('aria-pressed', (i === currentPage).toString());
-                dot.setAttribute('data-page', (i + 1).toString());
+                dot.setAttribute('aria-pressed', (i === currentItem).toString());
+                dot.setAttribute('data-item', (i + 1).toString());
                 dotListItem.appendChild(dot);
                 dotsList.appendChild(dotListItem);
                 dot.addEventListener('click', () => activateDot(i + 1));
                 dot.addEventListener('focus', () => pageFocused = i + 1);
                 dot.addEventListener('keydown', (e) => {
                     var _a;
-                    const currentPageItem = dots.querySelector(`[aria-pressed="true"]`);
-                    if (!currentPageItem) {
+                    const currentItemItem = dots.querySelector(`[aria-pressed="true"]`);
+                    if (!currentItemItem) {
                         return;
                     }
-                    const currentPage = parseInt((_a = currentPageItem.getAttribute('data-page')) !== null && _a !== void 0 ? _a : '1');
+                    const currentItem = parseInt((_a = currentItemItem.getAttribute('data-item')) !== null && _a !== void 0 ? _a : '1');
                     if (e.key === 'ArrowLeft') {
-                        const previousPage = currentPage - 1;
+                        const previousPage = currentItem - 1;
                         if (previousPage > 0) {
-                            const matchingDot = dots.querySelector(`[data-page="${previousPage}"]`);
+                            const matchingDot = dots.querySelector(`[data-item="${previousPage}"]`);
                             if (matchingDot) {
                                 matchingDot.focus();
                             }
@@ -55,9 +55,9 @@ function DotsPlugin(args) {
                         }
                     }
                     if (e.key === 'ArrowRight') {
-                        const nextPage = currentPage + 1;
+                        const nextPage = currentItem + 1;
                         if (nextPage <= pages) {
-                            const matchingDot = dots.querySelector(`[data-page="${nextPage}"]`);
+                            const matchingDot = dots.querySelector(`[data-item="${nextPage}"]`);
                             if (matchingDot) {
                                 matchingDot.focus();
                             }
@@ -69,19 +69,18 @@ function DotsPlugin(args) {
             dots.appendChild(dotsList);
             // return focus to same page after rebuild
             if (pageFocused) {
-                const matchingDot = dots.querySelector(`[data-page="${pageFocused}"]`);
+                const matchingDot = dots.querySelector(`[data-item="${pageFocused}"]`);
                 if (matchingDot) {
                     matchingDot.focus();
                 }
             }
         };
-        const activateDot = (page) => {
-            const scrollTargetPosition = slider.details.containerWidth * (page - 1);
-            slider.container.style.scrollBehavior = slider.options.scrollBehavior;
-            slider.container.style.scrollSnapType = 'none';
-            slider.container.scrollLeft = scrollTargetPosition;
-            slider.container.style.scrollBehavior = '';
-            slider.container.style.scrollSnapType = '';
+        const activateDot = (item) => {
+            // const scrollTargetPosition = slider.details.containerWidth * ( page - 1 );
+            // slider.container.style.scrollBehavior = slider.options.scrollBehavior;
+            // slider.container.scrollLeft = scrollTargetPosition;
+            // slider.container.style.scrollBehavior = '';
+            slider.moveToSlide(item - 1);
         };
         buildDots();
         if (options.container) {
@@ -90,9 +89,9 @@ function DotsPlugin(args) {
         else {
             (_b = slider.container.parentNode) === null || _b === void 0 ? void 0 : _b.insertBefore(dots, slider.container.nextSibling);
         }
-        slider.on('detailsChanged', () => {
-            buildDots();
-        });
+        slider.on('scrollEnd', buildDots);
+        slider.on('contentsChanged', buildDots);
+        slider.on('containerSizeChanged', buildDots);
     };
 }
 

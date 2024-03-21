@@ -18,6 +18,7 @@ import ScrollIndicatorPlugin from '../dist/plugins/scroll-indicator/scroll-indic
 import DotsPlugin from '../dist/plugins/dots/dots/index.esm.js';
 import FullWidthPlugin from '../dist/plugins/full-width/full-width/index.esm.js';
 import ThumbnailsPlugin from '../dist/plugins/thumbnails/thumbnails/index.esm.js';
+import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 
 (function () {
 	const init = () => {
@@ -45,7 +46,17 @@ import ThumbnailsPlugin from '../dist/plugins/thumbnails/thumbnails/index.esm.js
 				SkipLinksPlugin(),
 			]
 		);
-		console.log( '1-drag-scrolling-not-clickable', example1DragScrollingNotClickable );
+
+		const example1DragScrollingScrollSnap = new OverflowSlider(
+			document.querySelector( '.example-container-1-drag-scrolling-scroll-snap' ),
+			{
+				emulateScrollSnap: true,
+			},
+			[
+				DragScrollingPlugin(),
+			]
+		);
+		console.log( '1-drag-scrolling-scroll-snap', example1DragScrollingScrollSnap );
 
 		const example1Arrows = new OverflowSlider(
 			document.querySelector( '.example-container-1-arrows' ),
@@ -71,7 +82,9 @@ import ThumbnailsPlugin from '../dist/plugins/thumbnails/thumbnails/index.esm.js
 
 		const example1Dots = new OverflowSlider(
 			document.querySelector( '.example-container-1-dots' ),
-			{},
+			{
+				emulateScrollSnap: true,
+			},
 			[
 				DragScrollingPlugin(),
 				SkipLinksPlugin(),
@@ -79,6 +92,20 @@ import ThumbnailsPlugin from '../dist/plugins/thumbnails/thumbnails/index.esm.js
 			]
 		);
 		console.log( '1-dots', example1Dots );
+
+		const example1Fade = new OverflowSlider(
+			document.querySelector( '.example-container-1-fade' ),
+			{
+				emulateScrollSnap: true,
+			},
+			[
+				DragScrollingPlugin(),
+				FadePlugin({
+					containerEnd: document.querySelector( '.example-container-1-fade__end' ),
+				}),
+			]
+		);
+		console.log( '1-fade', example1Fade );
 
 		const example2PerfectFit = new OverflowSlider(
 			document.querySelector( '.example-container-2-perfect-fit' ),
@@ -112,7 +139,9 @@ import ThumbnailsPlugin from '../dist/plugins/thumbnails/thumbnails/index.esm.js
 
 		const example3ScrollSnappingMandatory = new OverflowSlider(
 			document.querySelector( '.example-container-3-scroll-snapping-mandatory' ),
-			{},
+			{
+				emulateScrollSnap: true,
+			},
 			[
 				DragScrollingPlugin(),
 				ScrollIndicatorPlugin(),
@@ -122,7 +151,9 @@ import ThumbnailsPlugin from '../dist/plugins/thumbnails/thumbnails/index.esm.js
 
 		const example3ScrollSnappingProximity = new OverflowSlider(
 			document.querySelector( '.example-container-3-scroll-snapping-proximity' ),
-			{},
+			{
+				emulateScrollSnap: true,
+			},
 			[
 				DragScrollingPlugin(),
 				ScrollIndicatorPlugin(),
@@ -155,7 +186,9 @@ import ThumbnailsPlugin from '../dist/plugins/thumbnails/thumbnails/index.esm.js
 
 		const example4GridOrSliders = new OverflowSlider(
 			document.querySelector( '.example-container-4-grid-or-slider' ),
-			{},
+			{
+				emulateScrollSnap: true,
+			},
 			[
 				DragScrollingPlugin(),
 				ScrollIndicatorPlugin(),
@@ -183,7 +216,9 @@ import ThumbnailsPlugin from '../dist/plugins/thumbnails/thumbnails/index.esm.js
 
 		const example4SyncedMain = new OverflowSlider(
 			document.querySelector( '.example-container-4-synced-main' ),
-			{},
+			{
+				emulateScrollSnap: true,
+			},
 			[
 				DragScrollingPlugin(),
 			]
@@ -192,7 +227,9 @@ import ThumbnailsPlugin from '../dist/plugins/thumbnails/thumbnails/index.esm.js
 
 		const example4SyncedThumbnails = new OverflowSlider(
 			document.querySelector( '.example-container-4-synced-thumbnails' ),
-			{},
+			{
+				emulateScrollSnap: true,
+			},
 			[
 				DragScrollingPlugin(),
 				ThumbnailsPlugin({

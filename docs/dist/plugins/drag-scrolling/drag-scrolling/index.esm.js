@@ -8,9 +8,13 @@ function DragScrollingPlugin(args) {
         let isMouseDown = false;
         let startX = 0;
         let scrollLeft = 0;
+        let isMovingForward = false;
+        let programmaticScrollStarted = false;
+        let mayNeedToSnap = false;
         // add data attribute to container
         slider.container.setAttribute('data-has-drag-scrolling', 'true');
         const mouseDown = (e) => {
+            programmaticScrollStarted = false;
             if (!slider.details.hasOverflow) {
                 return;
             }
@@ -22,7 +26,6 @@ function DragScrollingPlugin(args) {
             scrollLeft = slider.container.scrollLeft;
             // change cursor to grabbing
             slider.container.style.cursor = 'grabbing';
-            slider.container.style.scrollSnapType = 'none';
             slider.container.style.scrollBehavior = 'auto';
             // prevent focus going to the slides
             e.preventDefault();
@@ -30,15 +33,26 @@ function DragScrollingPlugin(args) {
         };
         const mouseMove = (e) => {
             if (!slider.details.hasOverflow) {
+                programmaticScrollStarted = false;
                 return;
             }
             if (!isMouseDown) {
+                programmaticScrollStarted = false;
                 return;
             }
             e.preventDefault();
+            if (!programmaticScrollStarted) {
+                programmaticScrollStarted = true;
+                slider.emit('programmaticScrollStart');
+            }
             const x = e.pageX - slider.container.offsetLeft;
             const walk = (x - startX);
-            slider.container.scrollLeft = scrollLeft - walk;
+            const newScrollLeft = scrollLeft - walk;
+            mayNeedToSnap = true;
+            if (slider.container.scrollLeft !== newScrollLeft) {
+                isMovingForward = slider.container.scrollLeft < newScrollLeft;
+            }
+            slider.container.scrollLeft = newScrollLeft;
             const absWalk = Math.abs(walk);
             const slides = slider.container.querySelectorAll(slider.options.slidesSelector);
             const pointerEvents = absWalk > options.draggedDistanceThatPreventsClick ? 'none' : '';
@@ -48,12 +62,13 @@ function DragScrollingPlugin(args) {
         };
         const mouseUp = () => {
             if (!slider.details.hasOverflow) {
+                programmaticScrollStarted = false;
                 return;
             }
             isMouseDown = false;
             slider.container.style.cursor = '';
             setTimeout(() => {
-                slider.container.style.scrollSnapType = '';
+                programmaticScrollStarted = false;
                 slider.container.style.scrollBehavior = '';
                 const slides = slider.container.querySelectorAll(slider.options.slidesSelector);
                 slides.forEach((slide) => {
@@ -64,6 +79,18 @@ function DragScrollingPlugin(args) {
         window.addEventListener('mousedown', mouseDown);
         window.addEventListener('mousemove', mouseMove);
         window.addEventListener('mouseup', mouseUp);
+        // emulate scroll snapping
+        if (slider.options.emulateScrollSnap) {
+            const snap = () => {
+                if (!mayNeedToSnap || isMouseDown) {
+                    return;
+                }
+                mayNeedToSnap = false;
+                slider.snapToClosestSlide(isMovingForward ? 'next' : 'prev');
+            };
+            slider.on('programmaticScrollEnd', snap);
+            window.addEventListener('mouseup', snap);
+        }
     };
 }
 

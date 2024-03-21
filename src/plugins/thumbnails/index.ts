@@ -40,7 +40,8 @@ export default function FullWidthPlugin( args: { [key: string]: any } ) {
 		setActiveThumbnail();
 		addClickListeners();
 
-		mainSlider.on( 'activeSlideChanged', () => {
+		// @todo debounce on scroll
+		mainSlider.on( 'scrollEnd', () => {
 			setTimeout(() => {
 				const activeSlideIdx = mainSlider.activeSlideIdx;
 				const activeThumbnail = slider.slides[activeSlideIdx] as HTMLElement;

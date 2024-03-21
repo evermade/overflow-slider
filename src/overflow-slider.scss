@@ -9,11 +9,11 @@
 .overflow-slider {
 	overflow: auto;
 	width: 100%;
-	overflow: auto;
 	display: grid;
 	grid-auto-flow: column;
 	grid-template-columns: max-content;
 	max-width: max-content;
+	position: relative;
 	// hide native scrollbars
 	&::-webkit-scrollbar {
 		display: none;
@@ -32,6 +32,7 @@
 
 @import 'plugins/arrows/styles.scss';
 @import 'plugins/dots/styles.scss';
+@import 'plugins/fade/styles.scss';
 @import 'plugins/drag-scrolling/styles.scss';
 @import 'plugins/scroll-indicator/styles.scss';
 @import 'plugins/skip-links/styles.scss';

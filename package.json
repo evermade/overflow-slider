@@ -1,6 +1,6 @@
 {
 	"name": "@evermade/overflow-slider",
-	"version": "2.0.2",
+	"version": "3.0.0",
 	"description": "Accessible slider tha works with overflow: auto.",
 	"type": "module",
 	"main": "dist/index.js",
@@ -38,6 +38,10 @@
 		"./plugins/thumbnails": {
 			"import": "./dist/plugins/thumbnails/thumbnails/index.esm.js",
 			"require": "./dist/plugins/thumbnails/thumbnails/index.min.js"
+		},
+		"./plugins/fade": {
+			"import": "./dist/plugins/fade/fade/index.esm.js",
+			"require": "./dist/plugins/fade/fade/index.min.js"
 		},
 		"./style.css": "./dist/overflow-slider.css"
 	},

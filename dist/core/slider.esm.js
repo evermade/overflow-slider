@@ -69,7 +69,87 @@ function Slider(container, options, plugins) {
         const resizeObserver = new ResizeObserver(() => slider.emit('containerSizeChanged'));
         resizeObserver.observe(slider.container);
         // scroll event with debouncing
-        slider.container.addEventListener('scroll', () => slider.emit('scroll'));
+        let scrollTimeout;
+        let nativeScrollTimeout;
+        let programmaticScrollTimeout;
+        let scrollLeft = slider.container.scrollLeft;
+        let nativeScrollLeft = slider.container.scrollLeft;
+        let programmaticScrollLeft = slider.container.scrollLeft;
+        let isScrolling = false;
+        let isUserScrolling = false;
+        let isProgrammaticScrolling = false;
+        // any scroll
+        slider.container.addEventListener('scroll', () => {
+            const newScrollLeft = slider.container.scrollLeft;
+            if (scrollLeft !== newScrollLeft) {
+                if (!isScrolling) {
+                    isScrolling = true;
+                    slider.emit('scrollStart');
+                }
+                scrollLeft = newScrollLeft;
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    isScrolling = false;
+                    slider.emit('scrollEnd');
+                }, 50);
+                slider.emit('scroll');
+            }
+            // keep up nativeScrolling to take into account scroll-snap
+            if (isUserScrolling) {
+                nativeScrollHandler();
+            }
+        });
+        // user initted scroll (touchmove, mouse wheel, etc.)
+        const nativeScrollHandler = () => {
+            const newScrollLeft = slider.container.scrollLeft;
+            if (nativeScrollLeft !== newScrollLeft && !isProgrammaticScrolling) {
+                if (!isUserScrolling) {
+                    slider.emit('nativeScrollStart');
+                    isUserScrolling = true;
+                }
+                slider.emit('nativeScroll');
+                nativeScrollLeft = newScrollLeft;
+                clearTimeout(nativeScrollTimeout);
+                nativeScrollTimeout = setTimeout(() => {
+                    isUserScrolling = false;
+                    slider.emit('nativeScrollEnd');
+                    // update programmaticScrollLeft to match nativeScrollLeft
+                    // this prevents programmaticScroll triggering with no real change to scrollLeft
+                    programmaticScrollLeft = nativeScrollLeft;
+                }, 50);
+            }
+        };
+        slider.container.addEventListener('touchmove', nativeScrollHandler);
+        slider.container.addEventListener('mousewheel', nativeScrollHandler);
+        slider.container.addEventListener('wheel', nativeScrollHandler);
+        // programmatic scroll (scrollTo, etc.)
+        slider.on('programmaticScrollStart', () => {
+            isProgrammaticScrolling = true;
+        });
+        slider.container.addEventListener('scroll', () => {
+            const newScrollLeft = slider.container.scrollLeft;
+            if (programmaticScrollLeft !== newScrollLeft && !isUserScrolling && isProgrammaticScrolling) {
+                programmaticScrollLeft = newScrollLeft;
+                clearTimeout(programmaticScrollTimeout);
+                programmaticScrollTimeout = setTimeout(() => {
+                    isProgrammaticScrolling = false;
+                    slider.emit('programmaticScrollEnd');
+                    // update nativeScrollLeft to match programmaticScrollLeft
+                    // this prevents nativeScroll triggering with no real change to scrollLeft
+                    nativeScrollLeft = programmaticScrollLeft;
+                }, 50);
+                slider.emit('programmaticScroll');
+            }
+        });
+        // Fix issues on scroll snapping not working on programmatic scroll (it's not smooth)
+        // by disabling scroll snap if scrolling is programmatic
+        slider.on('programmaticScrollStart', () => {
+            slider.container.style.scrollSnapType = 'none';
+        });
+        // restore scroll snap if user scroll starts
+        slider.on('nativeScrollStart', () => {
+            slider.container.style.scrollSnapType = '';
+        });
         // Listen for mouse down and touch start events on the document
         // This handles both mouse clicks and touch interactions
         let wasInteractedWith = false;
@@ -123,18 +203,14 @@ function Slider(container, options, plugins) {
         else if (slideStart === 0) {
             scrollTarget = 0;
         }
+        else {
+            scrollTarget = slideStart;
+        }
         if (scrollTarget !== null) {
-            slider.container.style.scrollSnapType = 'none';
-            // seems like in order for scroll behavior: smooth to work, we need to wait a bit to disable scrollSnapType
             setTimeout((scrollTarget) => {
+                slider.emit('programmaticScrollStart');
                 slider.container.scrollTo({ left: scrollTarget, behavior: behavior });
             }, 50, scrollTarget);
-            setTimeout(() => {
-                // leave snapping off to fix issues with slide moving back on focus
-                if (behavior == 'smooth') {
-                    slider.container.style.scrollSnapType = '';
-                }
-            }, 500);
         }
     }
     function setActiveSlideIdx() {
@@ -170,6 +246,14 @@ function Slider(container, options, plugins) {
             gapSize = secondSlideRect.left - firstSlideRect.right;
         }
         return gapSize;
+    }
+    function getLeftOffset() {
+        let offset = 0;
+        const fullWidthOffset = slider.container.getAttribute('data-full-width-offset');
+        if (fullWidthOffset) {
+            offset = parseInt(fullWidthOffset);
+        }
+        return offset;
     }
     function moveToDirection(direction = "prev") {
         const scrollStrategy = slider.options.scrollStrategy;
@@ -231,9 +315,74 @@ function Slider(container, options, plugins) {
                 }
             }
         }
+        // add left offset
+        const offsettedTargetScrollPosition = targetScrollPosition - getLeftOffset();
+        if (offsettedTargetScrollPosition >= 0) {
+            targetScrollPosition = offsettedTargetScrollPosition;
+        }
+        slider.emit('programmaticScrollStart');
         slider.container.style.scrollBehavior = slider.options.scrollBehavior;
         slider.container.scrollLeft = targetScrollPosition;
         setTimeout(() => slider.container.style.scrollBehavior = '', 50);
+    }
+    function snapToClosestSlide(direction = "prev") {
+        const isMovingForward = direction === 'next';
+        const slideReference = [];
+        for (let i = 0; i < slider.slides.length; i++) {
+            const slide = slider.slides[i];
+            const slideWidth = slide.offsetWidth;
+            const slideStart = slide.offsetLeft;
+            const slideEnd = slideStart + slideWidth;
+            const slideMiddle = slideStart + slideWidth / 2;
+            const trigger = Math.min(slideMiddle, slideStart + slider.options.emulateScrollSnapMaxThreshold);
+            slideReference.push({
+                start: slideStart,
+                middle: slideMiddle,
+                end: slideEnd,
+                width: slideWidth,
+                trigger: trigger,
+                slide: slide,
+            });
+        }
+        let snapTarget = null;
+        const scrollPosition = slider.container.scrollLeft;
+        if (isMovingForward) {
+            for (let i = 0; i < slideReference.length; i++) {
+                const item = slideReference[i];
+                if (i === 0 && scrollPosition <= item.trigger) {
+                    snapTarget = 0;
+                    break;
+                }
+                if (slider.container.scrollLeft <= item.trigger) {
+                    snapTarget = item.start;
+                    break;
+                }
+            }
+        }
+        else {
+            for (let i = slideReference.length - 1; i >= 0; i--) {
+                const item = slideReference[i];
+                if (i === slideReference.length - 1 && scrollPosition >= item.trigger) {
+                    snapTarget = item.start;
+                    break;
+                }
+                if (slider.container.scrollLeft >= item.trigger) {
+                    snapTarget = item.start;
+                    break;
+                }
+            }
+        }
+        if (snapTarget !== null) {
+            const offsettedSnapTarget = snapTarget - getLeftOffset();
+            if (offsettedSnapTarget >= 0) {
+                snapTarget = offsettedSnapTarget;
+            }
+            const scrollBehavior = slider.options.scrollBehavior || 'smooth';
+            slider.container.scrollTo({
+                left: snapTarget,
+                behavior: scrollBehavior
+            });
+        }
     }
     function on(name, cb) {
         if (!subs[name]) {
@@ -257,6 +406,7 @@ function Slider(container, options, plugins) {
         emit,
         moveToDirection,
         moveToSlide,
+        snapToClosestSlide,
         on,
         options,
     };
