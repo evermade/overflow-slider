@@ -66,7 +66,11 @@ export default function ArrowsPlugin( args: { [key: string]: any } ) {
 		prev.setAttribute( 'aria-controls', slider.container.getAttribute( 'id' ) ?? '');
 		prev.setAttribute( 'data-type', 'prev' );
 		prev.innerHTML = options.icons.prev;
-		prev.addEventListener( 'click', () => slider.moveToDirection( 'prev' ) );
+		prev.addEventListener( 'click', () => {
+			if ( prev.getAttribute('data-has-content') === 'true' ) {
+				slider.moveToDirection( 'prev' );
+			}
+		} );
 
 		const next = document.createElement( 'button' );
 		next.setAttribute( 'class', options.classNames.nextButton );
@@ -75,7 +79,11 @@ export default function ArrowsPlugin( args: { [key: string]: any } ) {
 		next.setAttribute( 'aria-controls', slider.container.getAttribute( 'id' ) ?? '');
 		next.setAttribute( 'data-type', 'next' );
 		next.innerHTML = options.icons.next;
-		next.addEventListener( 'click', () => slider.moveToDirection( 'next' ) );
+		next.addEventListener( 'click', () => {
+			if ( next.getAttribute('data-has-content') === 'true' ) {
+				slider.moveToDirection( 'next' );
+			}
+		} );
 
 		// insert buttons to the nav
 		nav.appendChild( prev );
@@ -83,15 +91,15 @@ export default function ArrowsPlugin( args: { [key: string]: any } ) {
 
 		const update = () => {
 			const scrollLeft = slider.container.scrollLeft;
-			const scrollWidth = slider.container.scrollWidth;
-			const clientWidth = slider.container.clientWidth;
-			const buffer      = 1;
-			if ( scrollLeft === 0 ) {
+			const scrollWidth = slider.getInclusiveScrollWidth();
+			const clientWidth = slider.getInclusiveClientWidth();
+			const buffer      = 0;
+			if ( Math.floor( scrollLeft ) === 0 ) {
 				prev.setAttribute( 'data-has-content', 'false' );
 			} else {
 				prev.setAttribute( 'data-has-content', 'true' );
 			}
-			if ( scrollLeft + clientWidth >= scrollWidth - buffer ) {
+			if ( Math.floor( scrollLeft + clientWidth ) >= Math.floor( scrollWidth ) ) {
 				next.setAttribute( 'data-has-content', 'false' );
 			} else {
 				next.setAttribute( 'data-has-content', 'true' );
@@ -110,7 +118,7 @@ export default function ArrowsPlugin( args: { [key: string]: any } ) {
 		}
 
 		update();
-		slider.on( 'scroll', update );
+		slider.on( 'scrollEnd', update );
 		slider.on( 'contentsChanged', update );
 		slider.on( 'containerSizeChanged', update );
 	};

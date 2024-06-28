@@ -103,9 +103,13 @@ Note that you can easily write styles from scratch if you want to. See source co
 
 ## Known issues
 
-### Drag Scrolling and Smoothness
+### CSS grids and Overflow Slider
 
-Scroll snapping doesn't apply smoothly to drag scrolling. It might be browser limitation or some issue with implementation here. Should look into fixing it.
+You can use use Overflow Slider within CSS grid but if you are using `fr` units remember to set them like `minmax(0, 1fr)` instead of just `1fr`. With plain `1fr` the width of columns can be calculated incorrectly by browser.
+
+### CSS scroll-snap can be buggy
+
+If you are using `scroll-snap-type` CSS property, you might encounter some bugs like browser wants to snap to a slide regardless of margins.
 
 ## Limitations
 
@@ -132,6 +136,14 @@ Auto-play is not supported at the moment but can probably be implemented as a pl
 * Document all plugins and their parameters here
 
 ## Changelog
+
+### 3.1.0
+
+* Add: slider.getInclusiveScrollWidth and slider.getInclusiveScrollHeight methods to get widths including outermost childs outermost margins
+* Fix: Lot of bugs related to subpixel widths
+* Fix: Don't run arrow click action if there are no more slides to scroll to
+* Fix: FullWidthPlugin bugs where arrows were not detecting start or end properly (because of child margins not taken into account)
+* Fix: Attach ThumbnailsPlugin to activeSlideChanged which is more appropriate hook
 
 ### 3.0.0
 

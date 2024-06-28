@@ -11,6 +11,8 @@ export type Slider<O = {}, C = {}, H extends string = string> = {
 	moveToSlide: (
 		index: number
 	) => void
+	getInclusiveScrollWidth: () => number
+	getInclusiveClientWidth: () => number
 	on: (
 		name: H | SliderHooks,
 		cb: (props: Slider<O, C, H>) => void

@@ -41,13 +41,13 @@ function ScrollIndicatorPlugin(args) {
                 window.cancelAnimationFrame(requestId);
             }
             requestId = window.requestAnimationFrame(() => {
-                const scrollbarButtonWidth = (slider.details.containerWidth / slider.details.scrollableAreaWidth) * 100;
+                const scrollbarButtonWidth = (slider.details.containerWidth / slider.container.scrollWidth) * 100;
                 const scrollLeftInPortion = getScrollbarButtonLeftOffset();
                 scrollbarButton.style.width = `${scrollbarButtonWidth}%`;
                 scrollbarButton.style.transform = `translateX(${scrollLeftInPortion}px)`;
                 // aria-valuenow
                 const scrollLeft = slider.container.scrollLeft;
-                const scrollWidth = slider.container.scrollWidth;
+                const scrollWidth = slider.getInclusiveScrollWidth();
                 const containerWidth = slider.container.offsetWidth;
                 const scrollPercentage = (scrollLeft / (scrollWidth - containerWidth)) * 100;
                 scrollbarContainer.setAttribute('aria-valuenow', Math.round(Number.isNaN(scrollPercentage) ? 0 : scrollPercentage).toString());
@@ -81,10 +81,10 @@ function ScrollIndicatorPlugin(args) {
             const scrollbarButtonLeft = getScrollbarButtonLeftOffset();
             const scrollbarButtonRight = scrollbarButtonLeft + scrollbarButtonWidth;
             const clickX = e.pageX - scrollbarContainer.offsetLeft;
-            if (clickX < scrollbarButtonLeft) {
+            if (Math.floor(clickX) < Math.floor(scrollbarButtonLeft)) {
                 slider.moveToDirection('prev');
             }
-            else if (clickX > scrollbarButtonRight) {
+            else if (Math.floor(clickX) > Math.floor(scrollbarButtonRight)) {
                 slider.moveToDirection('next');
             }
         });

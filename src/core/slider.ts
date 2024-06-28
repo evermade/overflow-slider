@@ -1,6 +1,6 @@
 import { Slider, SliderOptions, SliderPlugin } from './types';
 import details from './details';
-import { generateId, objectsAreEqual } from './utils';
+import { generateId, objectsAreEqual, getOutermostChildrenEdgeMarginSum } from './utils';
 
 export default function Slider( container: HTMLElement, options : SliderOptions, plugins? : SliderPlugin[] ) {
 	let slider: Slider;
@@ -94,7 +94,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		// any scroll
 		slider.container.addEventListener('scroll', () => {
 			const newScrollLeft = slider.container.scrollLeft;
-			if (scrollLeft !== newScrollLeft) {
+			if ( Math.floor( scrollLeft ) !== Math.floor( newScrollLeft ) ) {
 				if (!isScrolling) {
 					isScrolling = true;
 					slider.emit('scrollStart');
@@ -116,7 +116,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		// user initted scroll (touchmove, mouse wheel, etc.)
 		const nativeScrollHandler = () => {
 			const newScrollLeft = slider.container.scrollLeft;
-			if (nativeScrollLeft !== newScrollLeft && !isProgrammaticScrolling) {
+			if ( Math.floor( nativeScrollLeft ) !== Math.floor( newScrollLeft ) && ! isProgrammaticScrolling ) {
 				if (!isUserScrolling) {
 					slider.emit('nativeScrollStart');
 					isUserScrolling = true;
@@ -145,7 +145,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 
 		slider.container.addEventListener('scroll', () => {
 			const newScrollLeft = slider.container.scrollLeft;
-			if (programmaticScrollLeft !== newScrollLeft && !isUserScrolling && isProgrammaticScrolling) {
+			if ( Math.floor( programmaticScrollLeft ) !== Math.floor( newScrollLeft ) && !isUserScrolling && isProgrammaticScrolling) {
 				programmaticScrollLeft = newScrollLeft;
 				clearTimeout(programmaticScrollTimeout);
 				programmaticScrollTimeout = setTimeout(() => {
@@ -218,11 +218,11 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		const slideStart = slideRect.left - sliderRect.left + scrollLeft;
 		const slideEnd = slideStart + slideRect.width;
 		let scrollTarget = null;
-		if (slideStart < scrollLeft) {
+		if ( Math.floor( slideStart ) < Math.floor( scrollLeft ) ) {
 			scrollTarget = slideStart;
-		} else if (slideEnd > scrollLeft + containerWidth) {
+		} else if ( Math.floor( slideEnd ) > Math.floor( scrollLeft ) + Math.floor( containerWidth ) ) {
 			scrollTarget = slideEnd - containerWidth;
-		} else if (slideStart === 0) {
+		} else if ( Math.floor( slideStart ) === 0) {
 			scrollTarget = 0;
 		} else {
 			scrollTarget = slideStart;
@@ -240,23 +240,33 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		const scrollLeft = slider.container.scrollLeft;
 		const slides = slider.slides;
 		let activeSlideIdx = 0;
+		let scrolledPastLastSlide = false;
 
 		for (let i = 0; i < slides.length; i++) {
 			const slideRect = slides[i].getBoundingClientRect();
 			const slideStart = slideRect.left - sliderRect.left + scrollLeft + getGapSize();
 
-			if (slideStart > scrollLeft) {
+			if ( Math.floor( slideStart ) >= Math.floor( scrollLeft ) ) {
 				activeSlideIdx = i;
 				break;
 			}
+			if ( i === slides.length - 1 ) {
+				scrolledPastLastSlide = true;
+			}
+		}
+
+		if ( scrolledPastLastSlide ) {
+			activeSlideIdx = slides.length - 1;
 		}
 
 		const oldActiveSlideIdx = slider.activeSlideIdx;
 		slider.activeSlideIdx = activeSlideIdx;
+
 		if (oldActiveSlideIdx !== activeSlideIdx) {
 			slider.emit('activeSlideChanged');
 		}
 	}
+
 
 	function moveToSlide( idx: number ) {
 		const slide = slider.slides[idx];
@@ -265,12 +275,20 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		}
 	};
 
+	function getInclusiveScrollWidth() : number {
+		return slider.container.scrollWidth + getOutermostChildrenEdgeMarginSum(slider.container);
+	};
+
+	function getInclusiveClientWidth() : number {
+		return slider.container.clientWidth + getOutermostChildrenEdgeMarginSum(slider.container);
+	}
+
 	function getGapSize() : number {
 		let gapSize = 0;
 		if (slider.slides.length > 1) {
 			const firstSlideRect = slider.slides[0].getBoundingClientRect();
 			const secondSlideRect = slider.slides[1].getBoundingClientRect();
-			gapSize = secondSlideRect.left - firstSlideRect.right;
+			gapSize = Math.floor( secondSlideRect.left - firstSlideRect.right );
 		}
 		return gapSize;
 	};
@@ -281,7 +299,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		if (fullWidthOffset) {
 			offset = parseInt(fullWidthOffset);
 		}
-		return offset;
+		return Math.floor( offset );
 	};
 
 	function moveToDirection(direction = "prev") {
@@ -293,16 +311,16 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		if (direction === 'prev') {
 			targetScrollPosition = Math.max(0, scrollLeft - slider.container.offsetWidth);
 		} else if (direction === 'next') {
-			targetScrollPosition = Math.min(slider.container.scrollWidth, scrollLeft + slider.container.offsetWidth);
+			targetScrollPosition = Math.min(slider.getInclusiveScrollWidth(), scrollLeft + slider.container.offsetWidth);
 		}
 		if (scrollStrategy === 'fullSlide') {
-			let fullSldeTargetScrollPosition = null;
+			let fullSlideTargetScrollPosition = null;
 
 			// extend targetScrollPosition to include gap
 			if (direction === 'prev') {
-				fullSldeTargetScrollPosition = Math.max(0, targetScrollPosition - getGapSize());
+				fullSlideTargetScrollPosition = Math.max(0, targetScrollPosition - getGapSize());
 			} else {
-				fullSldeTargetScrollPosition = Math.min(slider.container.scrollWidth, targetScrollPosition + getGapSize());
+				fullSlideTargetScrollPosition = Math.min(slider.getInclusiveScrollWidth(), targetScrollPosition + getGapSize());
 			}
 
 			if (direction === 'next') {
@@ -311,42 +329,50 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 					const slideRect = slide.getBoundingClientRect();
 					const slideStart = slideRect.left - sliderRect.left + scrollLeft;
 					const slideEnd = slideStart + slideRect.width;
-					if (slideStart < targetScrollPosition && slideEnd > targetScrollPosition) {
-						fullSldeTargetScrollPosition = slideStart;
+					if ( Math.floor( slideStart ) < Math.floor( targetScrollPosition ) && Math.floor( slideEnd ) > Math.floor( targetScrollPosition ) ) {
+						fullSlideTargetScrollPosition = slideStart;
 						partialSlideFound = true;
 						break;
 					}
 				}
-				if (!partialSlideFound) {
-					fullSldeTargetScrollPosition = Math.min(targetScrollPosition, slider.container.scrollWidth - slider.container.offsetWidth);
+				if ( ! partialSlideFound ) {
+					fullSlideTargetScrollPosition = Math.min(targetScrollPosition, slider.getInclusiveScrollWidth() - slider.container.offsetWidth);
 				}
-				if (fullSldeTargetScrollPosition && fullSldeTargetScrollPosition > scrollLeft) {
-					targetScrollPosition = fullSldeTargetScrollPosition;
+				if ( fullSlideTargetScrollPosition ) {
+					if ( Math.floor( fullSlideTargetScrollPosition ) > Math.floor( scrollLeft ) ) {
+						// make sure fullSlideTargetScrollPosition is possible considering the container width
+						const maxScrollPosition = Math.floor( slider.getInclusiveScrollWidth() ) - Math.floor( containerWidth );
+						targetScrollPosition = Math.min( fullSlideTargetScrollPosition, maxScrollPosition );
+					} else {
+						// cannot snap to slide, move one page worth of distance
+						targetScrollPosition = Math.min(slider.getInclusiveScrollWidth(), scrollLeft + containerWidth);
+					}
 				}
+
 			} else {
 				let partialSlideFound = false;
 				for (let slide of slider.slides) {
 					const slideRect = slide.getBoundingClientRect();
 					const slideStart = slideRect.left - sliderRect.left + scrollLeft;
 					const slideEnd = slideStart + slideRect.width;
-					if (slideStart < scrollLeft && slideEnd > scrollLeft) {
-						fullSldeTargetScrollPosition = slideEnd - containerWidth;
+					if ( Math.floor( slideStart ) < Math.floor( scrollLeft ) && Math.floor( slideEnd ) > Math.floor( scrollLeft ) ) {
+						fullSlideTargetScrollPosition = slideEnd - containerWidth;
 						partialSlideFound = true;
 						break;
 					}
 				}
-				if (!partialSlideFound) {
-					fullSldeTargetScrollPosition = Math.max(0, scrollLeft - containerWidth);
+				if ( ! partialSlideFound ) {
+					fullSlideTargetScrollPosition = Math.max(0, scrollLeft - containerWidth);
 				}
-				if (fullSldeTargetScrollPosition && fullSldeTargetScrollPosition < scrollLeft) {
-					targetScrollPosition = fullSldeTargetScrollPosition;
+				if ( fullSlideTargetScrollPosition && Math.floor( fullSlideTargetScrollPosition ) < Math.floor( scrollLeft ) ) {
+					targetScrollPosition = fullSlideTargetScrollPosition;
 				}
 			}
 		}
 
 		// add left offset
 		const offsettedTargetScrollPosition = targetScrollPosition - getLeftOffset();
-		if (offsettedTargetScrollPosition >= 0) {
+		if ( Math.floor( offsettedTargetScrollPosition ) >= 0) {
 			targetScrollPosition = offsettedTargetScrollPosition;
 		}
 
@@ -380,11 +406,11 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		if (isMovingForward) {
 			for (let i = 0; i < slideReference.length; i++) {
 				const item = slideReference[i];
-				if ( i === 0 && scrollPosition <= item.trigger ) {
+				if ( i === 0 && Math.floor( scrollPosition ) <= Math.floor( item.trigger ) ) {
 					snapTarget = 0;
 					break;
 				}
-				if (slider.container.scrollLeft <= item.trigger) {
+				if ( Math.floor( slider.container.scrollLeft ) <= Math.floor( item.trigger ) ) {
 					snapTarget = item.start;
 					break;
 				}
@@ -392,11 +418,11 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		} else {
 			for (let i = slideReference.length - 1; i >= 0; i--) {
 				const item = slideReference[i];
-				if ( i === slideReference.length - 1 && scrollPosition >= item.trigger ) {
+				if ( i === slideReference.length - 1 && Math.floor( scrollPosition ) >= Math.floor( item.trigger ) ) {
 					snapTarget = item.start;
 					break;
 				}
-				if (slider.container.scrollLeft >= item.trigger) {
+				if ( Math.floor( slider.container.scrollLeft ) >= Math.floor( item.trigger ) ) {
 					snapTarget = item.start;
 					break;
 				}
@@ -404,7 +430,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		}
 		if ( snapTarget !== null ) {
 			const offsettedSnapTarget = snapTarget - getLeftOffset();
-			if (offsettedSnapTarget >= 0) {
+			if ( Math.floor( offsettedSnapTarget ) >= 0 ) {
 				snapTarget = offsettedSnapTarget;
 			}
 
@@ -440,6 +466,8 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		moveToDirection,
 		moveToSlide,
 		snapToClosestSlide,
+		getInclusiveScrollWidth,
+		getInclusiveClientWidth,
 		on,
 		options,
 	};

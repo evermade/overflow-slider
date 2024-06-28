@@ -7,17 +7,17 @@ function details(slider) {
     let scrollableAreaWidth = 0;
     let amountOfPages = 0;
     let currentPage = 1;
-    if (slider.container.scrollWidth > slider.container.clientWidth) {
+    if (Math.floor(slider.getInclusiveScrollWidth()) > Math.floor(slider.getInclusiveClientWidth())) {
         hasOverflow = true;
     }
     slideCount = (_a = slider.slides.length) !== null && _a !== void 0 ? _a : 0;
     containerWidth = slider.container.offsetWidth;
-    scrollableAreaWidth = slider.container.scrollWidth;
+    scrollableAreaWidth = slider.getInclusiveScrollWidth();
     amountOfPages = Math.ceil(scrollableAreaWidth / containerWidth);
-    if (slider.container.scrollLeft >= 0) {
+    if (Math.floor(slider.container.scrollLeft) >= 0) {
         currentPage = Math.floor(slider.container.scrollLeft / containerWidth);
         // consider as last page if the scrollLeft + containerWidth is equal to scrollWidth
-        if (slider.container.scrollLeft + containerWidth === scrollableAreaWidth) {
+        if (Math.floor(slider.container.scrollLeft + containerWidth) === Math.floor(scrollableAreaWidth)) {
             currentPage = amountOfPages - 1;
         }
     }

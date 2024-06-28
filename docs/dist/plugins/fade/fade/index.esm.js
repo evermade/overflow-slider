@@ -36,19 +36,19 @@ function FadePlugin(args) {
         };
         const fadeAtStartOpacity = () => {
             const position = slider.container.scrollLeft;
-            if (position <= fadeItemStart.offsetWidth) {
+            if (Math.floor(position) <= Math.floor(fadeItemStart.offsetWidth)) {
                 return position / Math.max(fadeItemStart.offsetWidth, 1);
             }
             return 1;
         };
         const hasFadeAtEnd = () => {
-            return slider.container.scrollLeft < (slider.container.scrollWidth - slider.container.clientWidth - fadeItemEnd.offsetWidth);
+            return Math.floor(slider.container.scrollLeft) < Math.floor(slider.getInclusiveScrollWidth() - slider.getInclusiveClientWidth() - fadeItemEnd.offsetWidth);
         };
         const fadeAtEndOpacity = () => {
             const position = slider.container.scrollLeft;
-            const maxPosition = slider.container.scrollWidth - slider.container.clientWidth;
+            const maxPosition = slider.getInclusiveScrollWidth() - slider.getInclusiveClientWidth();
             const maxFadePosition = maxPosition - fadeItemEnd.offsetWidth;
-            if (position >= maxFadePosition) {
+            if (Math.floor(position) >= Math.floor(maxFadePosition)) {
                 return ((maxFadePosition - position) / Math.max(fadeItemEnd.offsetWidth, 1)) + 1;
             }
             return 1;

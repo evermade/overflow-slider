@@ -31,7 +31,11 @@ function ArrowsPlugin(args) {
         prev.setAttribute('aria-controls', (_d = slider.container.getAttribute('id')) !== null && _d !== void 0 ? _d : '');
         prev.setAttribute('data-type', 'prev');
         prev.innerHTML = options.icons.prev;
-        prev.addEventListener('click', () => slider.moveToDirection('prev'));
+        prev.addEventListener('click', () => {
+            if (prev.getAttribute('data-has-content') === 'true') {
+                slider.moveToDirection('prev');
+            }
+        });
         const next = document.createElement('button');
         next.setAttribute('class', options.classNames.nextButton);
         next.setAttribute('type', 'button');
@@ -39,22 +43,25 @@ function ArrowsPlugin(args) {
         next.setAttribute('aria-controls', (_e = slider.container.getAttribute('id')) !== null && _e !== void 0 ? _e : '');
         next.setAttribute('data-type', 'next');
         next.innerHTML = options.icons.next;
-        next.addEventListener('click', () => slider.moveToDirection('next'));
+        next.addEventListener('click', () => {
+            if (next.getAttribute('data-has-content') === 'true') {
+                slider.moveToDirection('next');
+            }
+        });
         // insert buttons to the nav
         nav.appendChild(prev);
         nav.appendChild(next);
         const update = () => {
             const scrollLeft = slider.container.scrollLeft;
-            const scrollWidth = slider.container.scrollWidth;
-            const clientWidth = slider.container.clientWidth;
-            const buffer = 1;
-            if (scrollLeft === 0) {
+            const scrollWidth = slider.getInclusiveScrollWidth();
+            const clientWidth = slider.getInclusiveClientWidth();
+            if (Math.floor(scrollLeft) === 0) {
                 prev.setAttribute('data-has-content', 'false');
             }
             else {
                 prev.setAttribute('data-has-content', 'true');
             }
-            if (scrollLeft + clientWidth >= scrollWidth - buffer) {
+            if (Math.floor(scrollLeft + clientWidth) >= Math.floor(scrollWidth)) {
                 next.setAttribute('data-has-content', 'false');
             }
             else {
@@ -74,7 +81,7 @@ function ArrowsPlugin(args) {
             }
         }
         update();
-        slider.on('scroll', update);
+        slider.on('scrollEnd', update);
         slider.on('contentsChanged', update);
         slider.on('containerSizeChanged', update);
     };

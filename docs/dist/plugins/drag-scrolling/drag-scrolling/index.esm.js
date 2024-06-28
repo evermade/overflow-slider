@@ -49,7 +49,7 @@ function DragScrollingPlugin(args) {
             const walk = (x - startX);
             const newScrollLeft = scrollLeft - walk;
             mayNeedToSnap = true;
-            if (slider.container.scrollLeft !== newScrollLeft) {
+            if (Math.floor(slider.container.scrollLeft) !== Math.floor(newScrollLeft)) {
                 isMovingForward = slider.container.scrollLeft < newScrollLeft;
             }
             slider.container.scrollLeft = newScrollLeft;
