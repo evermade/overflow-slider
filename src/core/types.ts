@@ -13,6 +13,8 @@ export type Slider<O = {}, C = {}, H extends string = string> = {
 	) => void
 	getInclusiveScrollWidth: () => number
 	getInclusiveClientWidth: () => number
+	getScrollLeft: () => number
+	setScrollLeft: (value: number) => void
 	on: (
 		name: H | SliderHooks,
 		cb: (props: Slider<O, C, H>) => void
@@ -28,6 +30,7 @@ export type SliderOptions = {
 	slidesSelector: string;
 	emulateScrollSnap: boolean;
 	emulateScrollSnapMaxThreshold: number;
+	rtl: boolean;
 	[key: string]: any;
 }
 

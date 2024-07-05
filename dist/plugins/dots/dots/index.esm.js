@@ -76,10 +76,6 @@ function DotsPlugin(args) {
             }
         };
         const activateDot = (item) => {
-            // const scrollTargetPosition = slider.details.containerWidth * ( page - 1 );
-            // slider.container.style.scrollBehavior = slider.options.scrollBehavior;
-            // slider.container.scrollLeft = scrollTargetPosition;
-            // slider.container.style.scrollBehavior = '';
             slider.moveToSlide(item - 1);
         };
         buildDots();

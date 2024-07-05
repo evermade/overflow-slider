@@ -30,7 +30,9 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 
 		const example1DragScrolling = new OverflowSlider(
 			document.querySelector( '.example-container-1-drag-scrolling-clickable' ),
-			{},
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
 			[
 				DragScrollingPlugin(),
 				SkipLinksPlugin(),
@@ -40,7 +42,9 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 
 		const example1DragScrollingNotClickable = new OverflowSlider(
 			document.querySelector( '.example-container-1-drag-scrolling-not-clickable' ),
-			{},
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
 			[
 				DragScrollingPlugin(),
 				SkipLinksPlugin(),
@@ -51,6 +55,7 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 			document.querySelector( '.example-container-1-drag-scrolling-scroll-snap' ),
 			{
 				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
 			},
 			[
 				DragScrollingPlugin(),
@@ -60,7 +65,9 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 
 		const example1Arrows = new OverflowSlider(
 			document.querySelector( '.example-container-1-arrows' ),
-			{},
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
 			[
 				DragScrollingPlugin(),
 				SkipLinksPlugin(),
@@ -71,7 +78,9 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 
 		const example1ScrollIndicator = new OverflowSlider(
 			document.querySelector( '.example-container-1-scroll-indicator' ),
-			{},
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
 			[
 				DragScrollingPlugin(),
 				SkipLinksPlugin(),
@@ -84,6 +93,7 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 			document.querySelector( '.example-container-1-dots' ),
 			{
 				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
 			},
 			[
 				DragScrollingPlugin(),
@@ -97,6 +107,7 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 			document.querySelector( '.example-container-1-fade' ),
 			{
 				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
 			},
 			[
 				DragScrollingPlugin(),
@@ -109,7 +120,9 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 
 		const example2PerfectFit = new OverflowSlider(
 			document.querySelector( '.example-container-2-perfect-fit' ),
-			{},
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
 			[
 				DragScrollingPlugin(),
 				ScrollIndicatorPlugin(),
@@ -119,7 +132,9 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 
 		const example2VaryingWidths = new OverflowSlider(
 			document.querySelector( '.example-container-2-varying-widths' ),
-			{},
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
 			[
 				DragScrollingPlugin(),
 				ScrollIndicatorPlugin(),
@@ -129,7 +144,9 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 
 		const example2OnlyFewSlides = new OverflowSlider(
 			document.querySelector( '.example-container-2-only-few-slides' ),
-			{},
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
 			[
 				DragScrollingPlugin(),
 				ScrollIndicatorPlugin(),
@@ -141,6 +158,7 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 			document.querySelector( '.example-container-3-scroll-snapping-mandatory' ),
 			{
 				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
 			},
 			[
 				DragScrollingPlugin(),
@@ -153,6 +171,7 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 			document.querySelector( '.example-container-3-scroll-snapping-proximity' ),
 			{
 				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
 			},
 			[
 				DragScrollingPlugin(),
@@ -163,7 +182,9 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 
 		const example3EntranceAnimation = new OverflowSlider(
 			document.querySelector( '.example-container-3-entrance-animation' ),
-			{},
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
 			[
 				DragScrollingPlugin(),
 				ScrollIndicatorPlugin(),
@@ -173,7 +194,9 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 
 		const example4Filters = new OverflowSlider(
 			document.querySelector( '.example-container-4-filters' ),
-			{},
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
 			[
 				DragScrollingPlugin(),
 				ArrowsPlugin({
@@ -188,6 +211,7 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 			document.querySelector( '.example-container-4-grid-or-slider' ),
 			{
 				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
 			},
 			[
 				DragScrollingPlugin(),
@@ -198,7 +222,9 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 
 		const example4FullWidth = new OverflowSlider(
 			document.querySelector( '.example-container-4-full-width' ),
-			{},
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
 			[
 				DragScrollingPlugin(),
 				FullWidthPlugin(
@@ -218,6 +244,7 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 			document.querySelector( '.example-container-4-synced-main' ),
 			{
 				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
 			},
 			[
 				DragScrollingPlugin(),
@@ -229,6 +256,7 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 			document.querySelector( '.example-container-4-synced-thumbnails' ),
 			{
 				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
 			},
 			[
 				DragScrollingPlugin(),
@@ -238,8 +266,6 @@ import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
 			]
 		);
 		console.log( '4-synced-thumbnails', example4SyncedThumbnails );
-
-
 
 	};
 

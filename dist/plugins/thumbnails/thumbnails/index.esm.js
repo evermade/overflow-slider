@@ -27,13 +27,16 @@ function FullWidthPlugin(args) {
         };
         setActiveThumbnail();
         addClickListeners();
-        // @todo debounce on scroll
-        mainSlider.on('activeSlideChanged', () => {
+        mainSlider.on('scrollEnd', () => {
             setTimeout(() => {
-                const activeSlideIdx = mainSlider.activeSlideIdx;
-                const activeThumbnail = slider.slides[activeSlideIdx];
+                const mainActiveSlideIdx = mainSlider.activeSlideIdx;
+                const thumbActiveSlideIdx = slider.activeSlideIdx;
+                if (thumbActiveSlideIdx === mainActiveSlideIdx) {
+                    return;
+                }
+                const activeThumbnail = slider.slides[mainActiveSlideIdx];
                 setActiveThumbnail(activeThumbnail);
-                slider.moveToSlide(activeSlideIdx);
+                slider.moveToSlide(mainActiveSlideIdx);
             }, 50);
         });
     };

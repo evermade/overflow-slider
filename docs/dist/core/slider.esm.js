@@ -184,6 +184,9 @@ function Slider(container, options, plugins) {
     }
     function setDataAttributes() {
         slider.container.setAttribute('data-has-overflow', slider.details.hasOverflow ? 'true' : 'false');
+        if (slider.options.rtl) {
+            slider.container.setAttribute('dir', 'rtl');
+        }
     }
     function ensureSlideIsInView(slide, scrollBehavior = null) {
         const behavior = scrollBehavior || slider.options.scrollBehavior;
@@ -215,19 +218,48 @@ function Slider(container, options, plugins) {
     }
     function setActiveSlideIdx() {
         const sliderRect = slider.container.getBoundingClientRect();
-        const scrollLeft = slider.container.scrollLeft;
+        const scrollLeft = slider.getScrollLeft();
         const slides = slider.slides;
         let activeSlideIdx = 0;
         let scrolledPastLastSlide = false;
-        for (let i = 0; i < slides.length; i++) {
-            const slideRect = slides[i].getBoundingClientRect();
-            const slideStart = slideRect.left - sliderRect.left + scrollLeft + getGapSize();
-            if (Math.floor(slideStart) >= Math.floor(scrollLeft)) {
-                activeSlideIdx = i;
-                break;
+        if (slider.options.rtl) {
+            const scrolledDistance = slider.getInclusiveScrollWidth() - scrollLeft - slider.getInclusiveClientWidth();
+            const slidePositions = [];
+            for (let i = slides.length - 1; i >= 0; i--) {
+                const slideRect = slides[i].getBoundingClientRect();
+                const slideEnd = Math.abs(slideRect.left) - Math.abs(sliderRect.left) + scrolledDistance;
+                slidePositions.push({
+                    slide: slides[i],
+                    slideEnd: slideEnd,
+                });
             }
-            if (i === slides.length - 1) {
-                scrolledPastLastSlide = true;
+            let closestSlide = null;
+            let closestDistance = null;
+            for (let i = 0; i < slidePositions.length; i++) {
+                const distance = Math.abs(slidePositions[i].slideEnd - scrolledDistance);
+                if (closestDistance === null || distance < closestDistance) {
+                    closestDistance = distance;
+                    closestSlide = slidePositions[i].slide;
+                }
+            }
+            if (closestSlide) {
+                activeSlideIdx = slides.indexOf(closestSlide);
+            }
+            else {
+                activeSlideIdx = slides.length - 1;
+            }
+        }
+        else {
+            for (let i = 0; i < slides.length; i++) {
+                const slideRect = slides[i].getBoundingClientRect();
+                const slideStart = slideRect.left - sliderRect.left + scrollLeft + getGapSize();
+                if (Math.floor(slideStart) >= Math.floor(scrollLeft)) {
+                    activeSlideIdx = i;
+                    break;
+                }
+                if (i === slides.length - 1) {
+                    scrolledPastLastSlide = true;
+                }
             }
         }
         if (scrolledPastLastSlide) {
@@ -235,6 +267,7 @@ function Slider(container, options, plugins) {
         }
         const oldActiveSlideIdx = slider.activeSlideIdx;
         slider.activeSlideIdx = activeSlideIdx;
+        // console.log('activeSlideIdx', activeSlideIdx);
         if (oldActiveSlideIdx !== activeSlideIdx) {
             slider.emit('activeSlideChanged');
         }
@@ -251,12 +284,18 @@ function Slider(container, options, plugins) {
     function getInclusiveClientWidth() {
         return slider.container.clientWidth + getOutermostChildrenEdgeMarginSum(slider.container);
     }
+    function getScrollLeft() {
+        return slider.options.rtl ? Math.abs(slider.container.scrollLeft) : slider.container.scrollLeft;
+    }
+    function setScrollLeft(value) {
+        slider.container.scrollLeft = slider.options.rtl ? -value : value;
+    }
     function getGapSize() {
         let gapSize = 0;
         if (slider.slides.length > 1) {
             const firstSlideRect = slider.slides[0].getBoundingClientRect();
             const secondSlideRect = slider.slides[1].getBoundingClientRect();
-            gapSize = Math.floor(secondSlideRect.left - firstSlideRect.right);
+            gapSize = slider.options.rtl ? Math.abs(Math.floor(secondSlideRect.right - firstSlideRect.left)) : Math.floor(secondSlideRect.left - firstSlideRect.right);
         }
         return gapSize;
     }
@@ -274,22 +313,23 @@ function Slider(container, options, plugins) {
         const sliderRect = slider.container.getBoundingClientRect();
         const containerWidth = slider.container.offsetWidth;
         let targetScrollPosition = scrollLeft;
-        if (direction === 'prev') {
+        const realDirection = slider.options.rtl ? (direction === 'prev' ? 'next' : 'prev') : direction;
+        if (realDirection === 'prev') {
             targetScrollPosition = Math.max(0, scrollLeft - slider.container.offsetWidth);
         }
-        else if (direction === 'next') {
+        else if (realDirection === 'next') {
             targetScrollPosition = Math.min(slider.getInclusiveScrollWidth(), scrollLeft + slider.container.offsetWidth);
         }
         if (scrollStrategy === 'fullSlide') {
             let fullSlideTargetScrollPosition = null;
             // extend targetScrollPosition to include gap
-            if (direction === 'prev') {
+            if (realDirection === 'prev') {
                 fullSlideTargetScrollPosition = Math.max(0, targetScrollPosition - getGapSize());
             }
             else {
                 fullSlideTargetScrollPosition = Math.min(slider.getInclusiveScrollWidth(), targetScrollPosition + getGapSize());
             }
-            if (direction === 'next') {
+            if (realDirection === 'next') {
                 let partialSlideFound = false;
                 for (let slide of slider.slides) {
                     const slideRect = slide.getBoundingClientRect();
@@ -347,12 +387,12 @@ function Slider(container, options, plugins) {
         setTimeout(() => slider.container.style.scrollBehavior = '', 50);
     }
     function snapToClosestSlide(direction = "prev") {
-        const isMovingForward = direction === 'next';
+        const isMovingForward = slider.options.rtl ? direction === 'prev' : direction === 'next';
         const slideReference = [];
         for (let i = 0; i < slider.slides.length; i++) {
             const slide = slider.slides[i];
             const slideWidth = slide.offsetWidth;
-            const slideStart = slide.offsetLeft;
+            const slideStart = slider.options.rtl ? Math.abs(slide.offsetLeft + slideWidth - slider.details.containerWidth) : slide.offsetLeft;
             const slideEnd = slideStart + slideWidth;
             const slideMiddle = slideStart + slideWidth / 2;
             const trigger = Math.min(slideMiddle, slideStart + slider.options.emulateScrollSnapMaxThreshold);
@@ -363,10 +403,14 @@ function Slider(container, options, plugins) {
                 width: slideWidth,
                 trigger: trigger,
                 slide: slide,
+                // debug
+                offSetleft: slide.offsetLeft,
+                rect: slide.getBoundingClientRect(),
             });
         }
+        console.log('slideReference', slideReference);
         let snapTarget = null;
-        const scrollPosition = slider.container.scrollLeft;
+        const scrollPosition = getScrollLeft();
         if (isMovingForward) {
             for (let i = 0; i < slideReference.length; i++) {
                 const item = slideReference[i];
@@ -374,7 +418,7 @@ function Slider(container, options, plugins) {
                     snapTarget = 0;
                     break;
                 }
-                if (Math.floor(slider.container.scrollLeft) <= Math.floor(item.trigger)) {
+                if (Math.floor(getScrollLeft()) <= Math.floor(item.trigger)) {
                     snapTarget = item.start;
                     break;
                 }
@@ -387,7 +431,7 @@ function Slider(container, options, plugins) {
                     snapTarget = item.start;
                     break;
                 }
-                if (Math.floor(slider.container.scrollLeft) >= Math.floor(item.trigger)) {
+                if (Math.floor(getScrollLeft()) >= Math.floor(item.trigger)) {
                     snapTarget = item.start;
                     break;
                 }
@@ -400,7 +444,7 @@ function Slider(container, options, plugins) {
             }
             const scrollBehavior = slider.options.scrollBehavior || 'smooth';
             slider.container.scrollTo({
-                left: snapTarget,
+                left: slider.options.rtl ? -snapTarget : snapTarget,
                 behavior: scrollBehavior
             });
         }
@@ -430,6 +474,8 @@ function Slider(container, options, plugins) {
         snapToClosestSlide,
         getInclusiveScrollWidth,
         getInclusiveClientWidth,
+        getScrollLeft,
+        setScrollLeft,
         on,
         options,
     };

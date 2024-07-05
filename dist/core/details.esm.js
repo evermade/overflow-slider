@@ -14,10 +14,10 @@ function details(slider) {
     containerWidth = slider.container.offsetWidth;
     scrollableAreaWidth = slider.getInclusiveScrollWidth();
     amountOfPages = Math.ceil(scrollableAreaWidth / containerWidth);
-    if (Math.floor(slider.container.scrollLeft) >= 0) {
-        currentPage = Math.floor(slider.container.scrollLeft / containerWidth);
+    if (Math.floor(slider.getScrollLeft()) >= 0) {
+        currentPage = Math.floor(slider.getScrollLeft() / containerWidth);
         // consider as last page if the scrollLeft + containerWidth is equal to scrollWidth
-        if (Math.floor(slider.container.scrollLeft + containerWidth) === Math.floor(scrollableAreaWidth)) {
+        if (Math.floor(slider.getScrollLeft() + containerWidth) === Math.floor(scrollableAreaWidth)) {
             currentPage = amountOfPages - 1;
         }
     }

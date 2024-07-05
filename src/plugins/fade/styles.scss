@@ -19,9 +19,19 @@
 .overflow-slider-fade--start {
 	left: 0;
 	background: linear-gradient(to right, var(--overflow-slider-fade-color) 0%, transparent 100%);
+	[dir="rtl"] & {
+		left: auto;
+		right: 0;
+		background: linear-gradient(to left, var(--overflow-slider-fade-color) 0%, transparent 100%);
+	}
 }
 
 .overflow-slider-fade--end {
 	right: 0;
 	background: linear-gradient(to left, var(--overflow-slider-fade-color) 0%, transparent 100%);
+	[dir="rtl"] & {
+		right: auto;
+		left: 0;
+		background: linear-gradient(to right, var(--overflow-slider-fade-color) 0%, transparent 100%);
+	}
 }

@@ -23,6 +23,7 @@ export default function OverflowSlider (
 			slidesSelector: ":scope > *",
 			emulateScrollSnap: false,
 			emulateScrollSnapMaxThreshold: 64,
+			rtl: false,
 		};
 
 		const sliderOptions = { ...defaults, ...options };

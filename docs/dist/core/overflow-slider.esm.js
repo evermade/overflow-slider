@@ -12,6 +12,7 @@ function OverflowSlider(container, options, plugins) {
             slidesSelector: ":scope > *",
             emulateScrollSnap: false,
             emulateScrollSnapMaxThreshold: 64,
+            rtl: false,
         };
         const sliderOptions = Object.assign(Object.assign({}, defaults), options);
         // disable smooth scrolling if user prefers reduced motion

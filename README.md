@@ -9,8 +9,9 @@ Overflow Slider aims to be lightweight, mobile-first and accessible. It is desig
 ## Demos
 
 * [Example and demos](https://evermade.github.io/overflow-slider/)
+* [RTL demos](https://evermade.github.io/overflow-slider/index-rtl.html)
 
-### Usage
+## Getting started
 
 Markup:
 
@@ -65,7 +66,7 @@ const slider = new OverflowSlider(
 const slider = new OverflowSlider(
 	document.querySelector( '.slider-container-here' ),
 	{
-		// options here
+		emulateScrollSnap: true,
 	},
 	[
 		ArrowsPlugin({
@@ -101,6 +102,55 @@ You can use the CSS variables to override some values easily.
 
 Note that you can easily write styles from scratch if you want to. See source code from `src/overflow-slider.scss` for reference.
 
+## Slides per view
+
+You control slides per view in CSS. Set gap between slides via `gap` to slider. Slide layout/size is controlled by `width` property. You can use others but `width` is the most stable.
+
+### A) Fixed width
+
+Set fixed width for slides: `width: 200px;`. Note you can freely change this with media queries.
+
+### B) Relative width
+
+Set relative width for slides: `width: 100vw;`. Note that you cannot use percentages because they are relative to the container and not the viewport.
+
+### C) Variable based width
+
+This is most practical approach if you want to make sure exactly 3 slides are visible at all times or so. Or you want to display like 1.5 slides in mobile per view.
+
+This is based on getting the container width and dividing it by the number of slides you want to show and subtracting the gap. It's recommended to add SCSS mixin for this in case you are using SCSS.
+
+Mixin:
+
+```scss
+@mixin slideWidth($slidesPerView: 3, $gap: var(--slide-gap, 1rem), $containerWidth: var(--slider-container-width, 90vw)) {
+	width: calc( ( #{$containerWidth} / #{$slidesPerView} ) - calc( #{$slidesPerView} - 1 ) / #{$slidesPerView} * #{$gap});
+}
+```
+
+Usage:
+
+```scss
+.overflow-slider {
+	--gap: 1.5rem;
+	gap: var(--gap);
+	> * {
+		--slidesPerView: 3;
+		@include slideWidth(
+			var(--slidesPerView),
+			var(--gap),
+			var(--slider-container-width)
+		);
+	}
+}
+```
+
+Note that if you are using FullWidthPlugin, you should use container width from `--slider-container-target-width` instead of `--slider-container-width`.
+
+## Plugins
+
+TBA
+
 ## Known issues
 
 ### CSS grids and Overflow Slider
@@ -117,10 +167,6 @@ If you are using `scroll-snap-type` CSS property, you might encounter some bugs 
 
 The library is designed to work with horizontal scrolling. Vertical scrolling is not supported and likely never will because it is not a common use case for sliders.
 
-### RTL support
-
-RTL support is not implemented yet. In case need arises it can be implemented but requires changes to the core and plugins.
-
 ### Looping slides
 
 Looping slides is not supported and likely never will be. It is a feature that is not very common and it is not very accessible.
@@ -136,6 +182,13 @@ Auto-play is not supported at the moment but can probably be implemented as a pl
 * Document all plugins and their parameters here
 
 ## Changelog
+
+### 3.2.0
+
+* Add: RTL support
+* Add: `--slider-container-target-width` for FullWidthPlugin to allow CSS based on target size
+* Add: Documentation how to set slides per view in CSS
+* Fix: Attach ThumbnailsPlugin to scrollEnd which skips in-between slides when multiple slides are scrolled at once
 
 ### 3.1.0
 

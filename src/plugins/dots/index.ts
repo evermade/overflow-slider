@@ -105,10 +105,6 @@ export default function DotsPlugin( args: { [key: string]: any } ) {
 		};
 
 		const activateDot = ( item: number ) => {
-			// const scrollTargetPosition = slider.details.containerWidth * ( page - 1 );
-			// slider.container.style.scrollBehavior = slider.options.scrollBehavior;
-			// slider.container.scrollLeft = scrollTargetPosition;
-			// slider.container.style.scrollBehavior = '';
 			slider.moveToSlide( item - 1 );
 		};
 

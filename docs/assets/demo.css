@@ -579,8 +579,18 @@ h3:before {
 	left: 0;
 }
 
+[dir="rtl"] .example-4-filters-previous {
+	right: 0;
+	left: auto;
+}
+
 .example-4-filters-next {
 	right: 0;
+}
+
+[dir="rtl"] .example-4-filters-next {
+	left: 0;
+	right: auto;
 }
 
 .example-4-filters-previous:has([data-has-content="false"]),
@@ -630,7 +640,7 @@ h3:before {
 
 .example-container-4-full-width {
 	width: 100vw;
-	margin-left: calc(-50vw + 50%);
+	margin-inline-start: calc(-50vw + 50%);
 }
 
 /* ===========================================================================

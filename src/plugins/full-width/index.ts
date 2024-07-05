@@ -29,16 +29,22 @@ export default function FullWidthPlugin( args: { [key: string]: any } ) {
 
 			const marginAmount = Math.floor((window.innerWidth - options.targetWidth(slider)) / 2);
 			if ( options.addMarginBefore ) {
-				firstSlide.style.marginLeft = `${marginAmount}px`;
+				firstSlide.style.marginInlineStart = `${marginAmount}px`;
 			}
 			if ( options.addMarginAfter ) {
-				lastSlide.style.marginRight = `${marginAmount}px`;
+				lastSlide.style.marginInlineEnd = `${marginAmount}px`;
 			}
 			slider.container.setAttribute( 'data-full-width-offset', marginAmount.toString() );
+			setCSS();
+		};
+
+		const setCSS = () => {
+			slider.container.style.setProperty('--slider-container-target-width', `${options.targetWidth(slider)}px`);
 		};
 
 		update();
 		slider.on( 'contentsChanged', update );
 		slider.on( 'containerSizeChanged', update );
+		window.addEventListener( 'resize', setCSS );
 	};
 }

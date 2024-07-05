@@ -30,7 +30,7 @@ function ArrowsPlugin(args) {
         prev.setAttribute('aria-label', options.texts.buttonPrevious);
         prev.setAttribute('aria-controls', (_d = slider.container.getAttribute('id')) !== null && _d !== void 0 ? _d : '');
         prev.setAttribute('data-type', 'prev');
-        prev.innerHTML = options.icons.prev;
+        prev.innerHTML = slider.options.rtl ? options.icons.next : options.icons.prev;
         prev.addEventListener('click', () => {
             if (prev.getAttribute('data-has-content') === 'true') {
                 slider.moveToDirection('prev');
@@ -42,7 +42,7 @@ function ArrowsPlugin(args) {
         next.setAttribute('aria-label', options.texts.buttonNext);
         next.setAttribute('aria-controls', (_e = slider.container.getAttribute('id')) !== null && _e !== void 0 ? _e : '');
         next.setAttribute('data-type', 'next');
-        next.innerHTML = options.icons.next;
+        next.innerHTML = slider.options.rtl ? options.icons.prev : options.icons.next;
         next.addEventListener('click', () => {
             if (next.getAttribute('data-has-content') === 'true') {
                 slider.moveToDirection('next');
@@ -52,21 +52,24 @@ function ArrowsPlugin(args) {
         nav.appendChild(prev);
         nav.appendChild(next);
         const update = () => {
-            const scrollLeft = slider.container.scrollLeft;
+            const scrollLeft = slider.getScrollLeft();
             const scrollWidth = slider.getInclusiveScrollWidth();
             const clientWidth = slider.getInclusiveClientWidth();
+            const buffer = 1;
             if (Math.floor(scrollLeft) === 0) {
                 prev.setAttribute('data-has-content', 'false');
             }
             else {
                 prev.setAttribute('data-has-content', 'true');
             }
-            if (Math.floor(scrollLeft + clientWidth) >= Math.floor(scrollWidth)) {
+            const maxWidthDifference = Math.abs(Math.floor(scrollLeft + clientWidth) - Math.floor(scrollWidth));
+            if (maxWidthDifference <= buffer) {
                 next.setAttribute('data-has-content', 'false');
             }
             else {
                 next.setAttribute('data-has-content', 'true');
             }
+            console.log('next', scrollLeft + clientWidth, scrollWidth);
         };
         if (options.containerNext && options.containerPrev) {
             options.containerPrev.appendChild(prev);
