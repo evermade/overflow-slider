@@ -17,12 +17,16 @@ export type Slider<O = {}, C = {}, H extends string = string> = {
 	setScrollLeft: (value: number) => void
 	on: (
 		name: H | SliderHooks,
-		cb: (props: Slider<O, C, H>) => void
+		cb: SliderCallback
 	) => void
 	options: SliderOptions,
 	details: SliderDetails,
 	activeSlideIdx: number,
 } & C;
+
+export type SliderCallback<O = {}, C = {}, H extends string = string> = (
+	props: Slider<O, C, H>
+) => void;
 
 export type SliderOptions = {
 	scrollBehavior: string;
@@ -31,7 +35,7 @@ export type SliderOptions = {
 	emulateScrollSnap: boolean;
 	emulateScrollSnapMaxThreshold: number;
 	rtl: boolean;
-	[key: string]: any;
+	[key: string]: unknown;
 }
 
 export type SliderDetails = {
@@ -65,7 +69,7 @@ export type HOOK_CONTENTS_CHANGED = 'contentsChanged';
 export type HOOK_CONTAINER_SIZE_CHANGED = 'containerSizeChanged';
 export type HOOK_ACTIVE_SLIDE_CHANGED = 'activeSlideChanged';
 
-// any type of scroll
+// all types of scroll
 export type HOOK_SCROLL_START = 'scrollStart';
 export type HOOK_SCROLL = 'scroll';
 export type HOOK_SCROLL_END = 'scrollEnd';

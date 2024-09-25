@@ -35,7 +35,7 @@ export type ArrowsOptions = {
 	containerNext: HTMLElement | null,
 };
 
-export default function ArrowsPlugin( args: { [key: string]: any } ) {
+export default function ArrowsPlugin( args: { [key: string]: unknown } ) {
 	return ( slider: Slider ) => {
 
 		const options = <ArrowsOptions>{

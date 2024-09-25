@@ -78,7 +78,7 @@ function Slider(container, options, plugins) {
         let isScrolling = false;
         let isUserScrolling = false;
         let isProgrammaticScrolling = false;
-        // any scroll
+        // all types of scroll
         slider.container.addEventListener('scroll', () => {
             const newScrollLeft = slider.container.scrollLeft;
             if (Math.floor(scrollLeft) !== Math.floor(newScrollLeft)) {
@@ -463,8 +463,9 @@ function Slider(container, options, plugins) {
             });
         }
         const optionCallBack = (_a = slider === null || slider === void 0 ? void 0 : slider.options) === null || _a === void 0 ? void 0 : _a[name];
+        // Type guard to check if the option callback is a function
         if (typeof optionCallBack === 'function') {
-            optionCallBack(slider);
+            optionCallBack(slider); // Type assertion here
         }
     }
     slider = {

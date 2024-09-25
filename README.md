@@ -33,7 +33,7 @@ npm install @evermade/overflow-slider
 
 Import the `OverflowSlider` along with plugins you want to use.
 
-```js
+```ts
 import { OverflowSlider } from '@evermade/overflow-slider';
 import DragScrollingPlugin from '@evermade/overflow-slider/plugins/drag-scrolling';
 import SkipLinksPlugin from '@evermade/overflow-slider/plugins/skip-links';
@@ -135,9 +135,9 @@ Usage:
 	--gap: 1.5rem;
 	gap: var(--gap);
 	> * {
-		--slidesPerView: 3;
+		--slides-per-view: 3;
 		@include slideWidth(
-			var(--slidesPerView),
+			var(--slides-per-view),
 			var(--gap),
 			var(--slider-container-width)
 		);
@@ -149,7 +149,280 @@ Note that if you are using FullWidthPlugin, you should use container width from 
 
 ## Plugins
 
-TBA
+### DragScrollingPlugin
+
+This plugin allows you to scroll the slider by dragging with a mouse. This works with items that have links or are links themselves.
+
+```ts
+import DragScrollingPlugin from '@evermade/overflow-slider/plugins/drag-scrolling';
+
+const slider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+	{},
+	[
+		DragScrollingPlugin(), // add options here or don't
+	]
+);
+```
+
+All options are optional.
+
+```ts
+type DragScrollingOptions = {
+	draggedDistanceThatPreventsClick: number, // default 10, how much user can drag before it's considered a drag and not a click in case of links
+};
+```
+
+### ArrowsPlugin
+
+This plugin adds previous and next arrows to the slider. You can customize the text, icons and class names.
+
+```ts
+import ArrowsPlugin from '@evermade/overflow-slider/plugins/arrows';
+
+const slider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+	{},
+	[
+		ArrowsPlugin(), // add options here or don't
+	]
+);
+```
+
+All options are optional.
+
+```ts
+type ArrowsOptions = {
+	texts: {
+		buttonPrevious: string;
+		buttonNext: string;
+	},
+	icons: {
+		prev: string; // SVG or other HTML
+		next: string; // SVG or other HTML
+	},
+	classNames: {
+		navContainer: string;
+		prevButton: string;
+		nextButton: string;
+	},
+	container: HTMLElement | null, // container for both arrows
+	containerPrev: HTMLElement | null, // container for previous arrow
+	containerNext: HTMLElement | null, // container for next arrow
+};
+```
+
+### ScrollIndicatorPlugin
+
+This plugin adds a scroll indicator to the slider. The indicator is a bar that shows how much of the slider is scrolled. Scroll indicator is like a custom scrollbar that is always visible.
+
+```ts
+import ScrollIndicatorPlugin from '@evermade/overflow-slider/plugins/scroll-indicator';
+
+const slider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+	{},
+	[
+		ScrollIndicatorPlugin(), // add options here or don't
+	]
+);
+```
+
+All options are optional.
+
+```ts
+type ScrollIndicatorOptions = {
+	classNames: {
+		scrollIndicator: string;
+		scrollIndicatorBar: string;
+		scrollIndicatorButton: string;
+	},
+	container: HTMLElement | null, // container for the scroll indicator
+};
+```
+
+### DotsPlugin
+
+This plugin adds dots to the slider. Dots are like pagination that shows how many slides there are and which one is active. For usability, scroll indicator is preferable.
+
+```ts
+import DotsPlugin from '@evermade/overflow-slider/plugins/dots';
+
+const slider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+	{},
+	[
+		DotsPlugin(), // add options here or don't
+	]
+);
+```
+
+All options are optional.
+
+```ts
+type DotsOptions = {
+	texts: {
+		dotDescription: string;
+	},
+	classNames: {
+		dotsContainer: string;
+		dotsItem: string;
+	},
+	container: HTMLElement | null,
+};
+```
+
+### SkipLinksPlugin
+
+This plugin adds skip links to the slider for keyboard users. Skip links are links that allow users to skip the whole slider and land after it. This is useful for accessibility.
+
+```ts
+import SkipLinksPlugin from '@evermade/overflow-slider/plugins/skip-links';
+
+const slider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+	{},
+	[
+		SkipLinksPlugin(), // add options here or don't
+	]
+);
+```
+
+All options are optional.
+
+```ts
+type SkipLinkOptions = {
+	texts: {
+		skipList: string;
+	},
+	classNames: {
+		skipLink: string;
+		skipLinkTarget: string;
+	},
+	containerBefore: HTMLElement | null,
+	containerAfter: HTMLElement | null,
+};
+```
+
+### FullWidthPlugin
+
+This plugin allows you to make the slider full width but have the start of the sliders aligned to your content width. They are scrollable to the full width but the slides are aligned to the content width for the start and end.
+
+```ts
+import FullWidthPlugin from '@evermade/overflow-slider/plugins/full-width';
+
+const slider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+	{},
+	[
+		FullWidthPlugin(), // add options here or don't
+	]
+);
+```
+
+All options are optional.
+
+```ts
+type FullWidthOptions = {
+	targetWidth: ( slider: Slider ) => number,
+	addMarginBefore: boolean,
+	addMarginAfter: boolean,
+};
+```
+
+Example of `targetWidth` function:
+
+```ts
+const sliderElement = document.querySelector( '.slider-container-here' );
+const sliderWrapper = document.querySelector( '.slider-wrapper' );
+if ( !sliderElement || !sliderWrapper ) {
+	throw new Error( 'Slider element or wrapper not found' );
+}
+const slider = new OverflowSlider(
+	sliderElement,
+	{},
+	[
+		FullWidthPlugin({
+			targetWidth: ( slider ) => {
+				return sliderWrapper.offsetWidth;
+			},
+		}),
+	]
+);
+```
+
+### FadePlugin
+
+This plugin adds a hint that there are more slides to scroll to. It fades the slides at the start and end of the slider to hint that there are more slides to scroll to.
+
+```ts
+import FadePlugin from '@evermade/overflow-slider/plugins/fade';
+
+const slider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+	{},
+	[
+		FadePlugin(), // add options here or don't
+	]
+);
+```
+
+All options are optional.
+
+```ts
+type FadeOptions = {
+	classNames: {
+		fadeItem: string;
+		fadeItemStart: string;
+		fadeItemEnd: string;
+	},
+	container: HTMLElement | null,
+	containerStart: HTMLElement | null,
+	containerEnd: HTMLElement | null,
+};
+```
+
+### ThumbnailsPlugin
+
+This plugin adds synchronized thumbnails to the slider. Thumbnails are like dots but they are images of the slides. They are synchronized with the main slider.
+
+```ts
+import ThumbnailsPlugin from '@evermade/overflow-slider/plugins/thumbnails';
+
+const slider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+	{},
+	[
+		ThumbnailsPlugin(), // add options here or don't
+	]
+);
+```
+
+You need to set mainSlider reference.
+
+```ts
+type ThumbnailsOptions = {
+	mainSlider: Slider,
+}
+```
+
+Example:
+
+```ts
+const mainSlider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+);
+
+const thumbnailsSlider = new OverflowSlider(
+	document.querySelector( '.thumbnails-container-here' ),
+	{},
+	[
+		ThumbnailsPlugin({
+			mainSlider: mainSlider,
+		}),
+	]
+);
+```
 
 ## Known issues
 
@@ -159,7 +432,7 @@ You can use use Overflow Slider within CSS grid but if you are using `fr` units 
 
 ### CSS scroll-snap can be buggy
 
-If you are using `scroll-snap-type` CSS property, you might encounter some bugs like browser wants to snap to a slide regardless of margins.
+If you are using `scroll-snap-type` CSS property, you might encounter some bugs like browser wants to snap to a slide regardless of margins. It's most reliable when there's only one slide per view.
 
 ## Limitations
 
@@ -182,6 +455,11 @@ Auto-play is not supported at the moment but can probably be implemented as a pl
 * Document all plugins and their parameters here
 
 ## Changelog
+
+### 3.2.1
+
+* Add: Documentation on plugins
+* Fix: Make types more strict and remove all "any" types
 
 ### 3.2.0
 

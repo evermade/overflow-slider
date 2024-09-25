@@ -7,17 +7,21 @@ function generateId( prefix : string, i = 1 ): string {
 	return id;
 }
 
-function objectsAreEqual( obj1: any, obj2: any ) {
+function objectsAreEqual(obj1: Record<string, unknown>, obj2: Record<string, unknown>): boolean {
 	const keys1 = Object.keys(obj1);
 	const keys2 = Object.keys(obj2);
+
 	if (keys1.length !== keys2.length) {
-			return false;
+		return false;
 	}
+
 	for (let key of keys1) {
-			if (obj2.hasOwnProperty(key) === false || obj1[key] !== obj2[key]) {
-					return false;
-			}
+		// Use `Object.prototype.hasOwnProperty.call` for better safety
+		if (!Object.prototype.hasOwnProperty.call(obj2, key) || obj1[key] !== obj2[key]) {
+			return false;
+		}
 	}
+
 	return true;
 }
 

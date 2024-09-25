@@ -20,7 +20,7 @@ const DEFAULT_CLASS_NAMES = {
 	dotsItem: 'overflow-slider__dot-item',
 };
 
-export default function DotsPlugin( args: { [key: string]: any } ) {
+export default function DotsPlugin( args: { [key: string]: unknown } ) {
 	return ( slider: Slider ) => {
 		const options = <DotsOptions>{
 			texts: {

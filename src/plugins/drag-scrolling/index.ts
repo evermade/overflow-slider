@@ -6,7 +6,7 @@ export type DragScrollingOptions = {
 	draggedDistanceThatPreventsClick: number,
 };
 
-export default function DragScrollingPlugin( args: { [key: string]: any } ) {
+export default function DragScrollingPlugin( args: { [key: string]: unknown } ) {
 	const options = <DragScrollingOptions>{
 		draggedDistanceThatPreventsClick: args?.draggedDistanceThatPreventsClick ?? DEFAULT_DRAGGED_DISTANCE_THAT_PREVENTS_CLICK,
 	};

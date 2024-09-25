@@ -11,7 +11,7 @@ export type FadeOptions = {
 	containerEnd: HTMLElement | null,
 };
 
-export default function FadePlugin( args: { [key: string]: any } ) {
+export default function FadePlugin( args: { [key: string]: unknown } ) {
 	return ( slider: Slider ) => {
 
 		const options = <FadeOptions>{

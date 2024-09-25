@@ -8,7 +8,7 @@ export type FullWidthOptions = {
 	addMarginAfter: boolean,
 };
 
-export default function FullWidthPlugin( args: { [key: string]: any } ) {
+export default function FullWidthPlugin( args: { [key: string]: unknown } ) {
 	return ( slider: Slider ) => {
 
 		const options = <FullWidthOptions>{

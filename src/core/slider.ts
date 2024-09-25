@@ -1,10 +1,10 @@
-import { Slider, SliderOptions, SliderPlugin } from './types';
+import { Slider, SliderOptions, SliderPlugin, SliderCallback } from './types';
 import details from './details';
 import { generateId, objectsAreEqual, getOutermostChildrenEdgeMarginSum } from './utils';
 
 export default function Slider( container: HTMLElement, options : SliderOptions, plugins? : SliderPlugin[] ) {
 	let slider: Slider;
-	let subs: { [key: string]: any[] } = {};
+	let subs: { [key: string]: SliderCallback[] } = {};
 
 	function init() {
 		slider.container = container;
@@ -91,7 +91,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		let isUserScrolling = false;
 		let isProgrammaticScrolling = false;
 
-		// any scroll
+		// all types of scroll
 		slider.container.addEventListener('scroll', () => {
 			const newScrollLeft = slider.container.scrollLeft;
 			if ( Math.floor( scrollLeft ) !== Math.floor( newScrollLeft ) ) {
@@ -490,7 +490,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		}
 	};
 
-	function on(name: string, cb: any) {
+	function on(name: string, cb: SliderCallback) {
 		if (!subs[name]) {
 			subs[name] = [];
 		}
@@ -500,12 +500,14 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 	function emit(name: string) {
 		if (subs && subs[name]) {
 			subs[name].forEach(cb => {
-					cb(slider);
+				cb(slider);
 			});
 		}
+
 		const optionCallBack = slider?.options?.[name];
+		// Type guard to check if the option callback is a function
 		if (typeof optionCallBack === 'function') {
-				optionCallBack(slider);
+			(optionCallBack as SliderCallback)(slider); // Type assertion here
 		}
 	};
 

@@ -15,7 +15,7 @@ export type ScrollIndicatorOptions = {
 	container: HTMLElement | null,
 };
 
-export default function ScrollIndicatorPlugin(args: { [key: string]: any }) {
+export default function ScrollIndicatorPlugin(args: { [key: string]: unknown }) {
 	return (slider: Slider) => {
 
 		const options = <ScrollIndicatorOptions>{

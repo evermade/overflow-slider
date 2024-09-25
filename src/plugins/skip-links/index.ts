@@ -22,7 +22,7 @@ export type SkipLinkOptions = {
 	containerAfter: HTMLElement | null,
 };
 
-export default function SkipLinksPlugin( args: { [key: string]: any } ) {
+export default function SkipLinksPlugin( args: { [key: string]: unknown } ) {
 	return ( slider: Slider ) => {
 		const options = <SkipLinkOptions>{
 			texts: {
