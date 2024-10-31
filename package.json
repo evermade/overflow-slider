@@ -12,36 +12,36 @@
 			"require": "./dist/index.min.js"
 		},
 		"./plugins/drag-scrolling": {
-			"import": "./dist/plugins/drag-scrolling/drag-scrolling/index.esm.js",
-			"require": "./dist/plugins/drag-scrolling/drag-scrolling/index.min.js"
+			"import": "./dist/plugins/drag-scrolling/index.esm.js",
+			"require": "./dist/plugins/drag-scrolling/index.min.js"
 		},
 		"./plugins/skip-links": {
-			"import": "./dist/plugins/skip-links/skip-links/index.esm.js",
-			"require": "./dist/plugins/skip-links/skip-links/index.min.js"
+			"import": "./dist/plugins/skip-links/index.esm.js",
+			"require": "./dist/plugins/skip-links/index.min.js"
 		},
 		"./plugins/scroll-indicator": {
-			"import": "./dist/plugins/scroll-indicator/scroll-indicator/index.esm.js",
-			"require": "./dist/plugins/scroll-indicator/scroll-indicator/index.min.js"
+			"import": "./dist/plugins/scroll-indicator/index.esm.js",
+			"require": "./dist/plugins/scroll-indicator/index.min.js"
 		},
 		"./plugins/arrows": {
-			"import": "./dist/plugins/arrows/arrows/index.esm.js",
-			"require": "./dist/plugins/arrows/arrows/index.min.js"
+			"import": "./dist/plugins/arrows/index.esm.js",
+			"require": "./dist/plugins/arrows/index.min.js"
 		},
 		"./plugins/full-width": {
-			"import": "./dist/plugins/full-width/full-width/index.esm.js",
-			"require": "./dist/plugins/full-width/full-width/index.min.js"
+			"import": "./dist/plugins/full-width/index.esm.js",
+			"require": "./dist/plugins/full-width/index.min.js"
 		},
 		"./plugins/dots": {
-			"import": "./dist/plugins/dots/dots/index.esm.js",
-			"require": "./dist/plugins/dots/dots/index.min.js"
+			"import": "./dist/plugins/dots/index.esm.js",
+			"require": "./dist/plugins/dots/index.min.js"
 		},
 		"./plugins/thumbnails": {
-			"import": "./dist/plugins/thumbnails/thumbnails/index.esm.js",
-			"require": "./dist/plugins/thumbnails/thumbnails/index.min.js"
+			"import": "./dist/plugins/thumbnails/index.esm.js",
+			"require": "./dist/plugins/thumbnails/index.min.js"
 		},
 		"./plugins/fade": {
-			"import": "./dist/plugins/fade/fade/index.esm.js",
-			"require": "./dist/plugins/fade/fade/index.min.js"
+			"import": "./dist/plugins/fade/index.esm.js",
+			"require": "./dist/plugins/fade/index.min.js"
 		},
 		"./style.css": "./dist/overflow-slider.css"
 	},

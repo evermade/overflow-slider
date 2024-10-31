@@ -11,14 +11,14 @@
  * import SkipLinksPlugin from '@overflow-slider/plugins/skip-links';
  */
 import { OverflowSlider } from '../dist/index.esm.js';
-import DragScrollingPlugin from '../dist/plugins/drag-scrolling/drag-scrolling/index.esm.js';
-import SkipLinksPlugin from '../dist/plugins/skip-links/skip-links/index.esm.js';
-import ArrowsPlugin from '../dist/plugins/arrows/arrows/index.esm.js';
-import ScrollIndicatorPlugin from '../dist/plugins/scroll-indicator/scroll-indicator/index.esm.js';
-import DotsPlugin from '../dist/plugins/dots/dots/index.esm.js';
-import FullWidthPlugin from '../dist/plugins/full-width/full-width/index.esm.js';
-import ThumbnailsPlugin from '../dist/plugins/thumbnails/thumbnails/index.esm.js';
-import FadePlugin from '../dist/plugins/fade/fade/index.esm.js';
+import DragScrollingPlugin from '../dist/plugins/drag-scrolling/index.esm.js';
+import SkipLinksPlugin from '../dist/plugins/skip-links/index.esm.js';
+import ArrowsPlugin from '../dist/plugins/arrows/index.esm.js';
+import ScrollIndicatorPlugin from '../dist/plugins/scroll-indicator/index.esm.js';
+import DotsPlugin from '../dist/plugins/dots/index.esm.js';
+import FullWidthPlugin from '../dist/plugins/full-width/index.esm.js';
+import ThumbnailsPlugin from '../dist/plugins/thumbnails/index.esm.js';
+import FadePlugin from '../dist/plugins/fade/index.esm.js';
 
 (function () {
 	const init = () => {

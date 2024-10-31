@@ -35,12 +35,9 @@ const plugins = [
 const pluginEntries = {
 		index: 'src/index.ts', // Adding the core file
 		...glob.sync('src/plugins/**/*.ts').reduce((entries, path) => {
-
 			const name = path.replace(/^src\/plugins\//, '').replace(/\.ts$/, '');
-			const nameWithoutIndex = name.replace(/\/index/, '');
-				// entries[nameWithoutIndex] = path;
-				entries['index'] = path;
-				return entries;
+			entries[name] = path;
+			return entries;
 		}, {}),
 };
 
@@ -56,7 +53,11 @@ export default [
 						...baseOutput,
 						dir: 'dist',
 						format: 'es',
-						entryFileNames: '[name].esm.js',
+						entryFileNames: (chunkInfo) => {
+							return chunkInfo.facadeModuleId.includes('/src/plugins/')
+								? 'index.esm.js'
+								: '[name].esm.js';
+						},
 				},
 				plugins,
 		},
@@ -66,7 +67,11 @@ export default [
 						...baseOutput,
 						dir: 'dist',
 						format: 'es',
-						entryFileNames: '[name].min.js',
+						entryFileNames: (chunkInfo) => {
+							return chunkInfo.facadeModuleId.includes('/src/plugins/')
+								? 'index.min.js'
+								: '[name].min.js';
+						},
 						plugins: [terser()],
 				},
 				plugins,

@@ -1,4 +1,4 @@
-import { generateId } from '../../../core/utils.esm.js';
+import { generateId } from '../../core/utils.esm.js';
 
 const DEFAULT_TEXTS = {
     skipList: 'Skip list'
