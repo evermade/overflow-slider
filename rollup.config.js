@@ -35,8 +35,11 @@ const plugins = [
 const pluginEntries = {
 		index: 'src/index.ts', // Adding the core file
 		...glob.sync('src/plugins/**/*.ts').reduce((entries, path) => {
-				const name = path.replace(/^src\/plugins\//, '').replace(/\.ts$/, '');
-				entries[name] = path;
+
+			const name = path.replace(/^src\/plugins\//, '').replace(/\.ts$/, '');
+			const nameWithoutIndex = name.replace(/\/index/, '');
+				// entries[nameWithoutIndex] = path;
+				entries['index'] = path;
 				return entries;
 		}, {}),
 };

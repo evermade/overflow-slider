@@ -456,6 +456,11 @@ Auto-play is not supported at the moment but can probably be implemented as a pl
 
 ## Changelog
 
+### 3.3.0
+
+* Refactor: Plugin build paths to match import paths as this caused some eslint warnings in projects. Import paths remain the same so no changes needed in projects.
+* Fix: Remove console logs
+
 ### 3.2.1
 
 * Add: Documentation on plugins
