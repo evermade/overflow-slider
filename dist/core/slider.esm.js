@@ -267,7 +267,6 @@ function Slider(container, options, plugins) {
         }
         const oldActiveSlideIdx = slider.activeSlideIdx;
         slider.activeSlideIdx = activeSlideIdx;
-        // console.log('activeSlideIdx', activeSlideIdx);
         if (oldActiveSlideIdx !== activeSlideIdx) {
             slider.emit('activeSlideChanged');
         }
@@ -408,7 +407,6 @@ function Slider(container, options, plugins) {
                 rect: slide.getBoundingClientRect(),
             });
         }
-        console.log('slideReference', slideReference);
         let snapTarget = null;
         const scrollPosition = getScrollLeft();
         if (isMovingForward) {

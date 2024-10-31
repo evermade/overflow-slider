@@ -105,7 +105,6 @@ export default function ArrowsPlugin( args: { [key: string]: unknown } ) {
 			} else {
 				next.setAttribute( 'data-has-content', 'true' );
 			}
-			console.log( 'next', scrollLeft + clientWidth, scrollWidth );
 		};
 
 		if ( options.containerNext && options.containerPrev ) {
