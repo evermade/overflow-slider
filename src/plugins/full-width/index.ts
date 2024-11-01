@@ -45,6 +45,6 @@ export default function FullWidthPlugin( args: { [key: string]: unknown } ) {
 		update();
 		slider.on( 'contentsChanged', update );
 		slider.on( 'containerSizeChanged', update );
-		window.addEventListener( 'resize', setCSS );
+		window.addEventListener( 'resize', update );
 	};
 }

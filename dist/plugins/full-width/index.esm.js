@@ -30,7 +30,7 @@ function FullWidthPlugin(args) {
         update();
         slider.on('contentsChanged', update);
         slider.on('containerSizeChanged', update);
-        window.addEventListener('resize', setCSS);
+        window.addEventListener('resize', update);
     };
 }
 

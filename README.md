@@ -457,6 +457,10 @@ Auto-play is not supported at the moment but can probably be implemented as a pl
 
 ## Changelog
 
+### 3.3.1
+
+* Fix: FullWidthPlugin margin calculation not being run if there's too few slides for overflow and you resize screen without container width changing
+
 ### 3.3.0
 
 * Add: Ability to move each direction by one slide at a time via `moveToSlideInDirection` prev/next
