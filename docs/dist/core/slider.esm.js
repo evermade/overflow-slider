@@ -277,6 +277,19 @@ function Slider(container, options, plugins) {
             ensureSlideIsInView(slide);
         }
     }
+    function moveToSlideInDirection(direction) {
+        const activeSlideIdx = slider.activeSlideIdx;
+        if (direction === 'prev') {
+            if (activeSlideIdx > 0) {
+                moveToSlide(activeSlideIdx - 1);
+            }
+        }
+        else if (direction === 'next') {
+            if (activeSlideIdx < slider.slides.length - 1) {
+                moveToSlide(activeSlideIdx + 1);
+            }
+        }
+    }
     function getInclusiveScrollWidth() {
         return slider.container.scrollWidth + getOutermostChildrenEdgeMarginSum(slider.container);
     }
@@ -470,6 +483,7 @@ function Slider(container, options, plugins) {
         emit,
         moveToDirection,
         moveToSlide,
+        moveToSlideInDirection,
         snapToClosestSlide,
         getInclusiveScrollWidth,
         getInclusiveClientWidth,

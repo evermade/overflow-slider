@@ -76,6 +76,21 @@ import FadePlugin from '../dist/plugins/fade/index.esm.js';
 		);
 		console.log( '1-arrows', example1Arrows );
 
+		const example1ArrowsBySlide = new OverflowSlider(
+			document.querySelector( '.example-container-1-arrows-by-slide' ),
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
+			[
+				DragScrollingPlugin(),
+				SkipLinksPlugin(),
+				ArrowsPlugin({
+					movementType: 'slide',
+				}),
+			]
+		);
+		console.log( '1-arrows-by-slide', example1ArrowsBySlide );
+
 		const example1ScrollIndicator = new OverflowSlider(
 			document.querySelector( '.example-container-1-scroll-indicator' ),
 			{

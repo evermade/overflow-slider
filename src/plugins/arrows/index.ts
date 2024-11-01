@@ -16,6 +16,8 @@ const DEFAULT_CLASS_NAMES = {
 	nextButton: 'overflow-slider__arrows-button overflow-slider__arrows-button--next',
 };
 
+export type ArrowsMovementTypes = 'view' | 'slide';
+
 export type ArrowsOptions = {
 	texts: {
 		buttonPrevious: string;
@@ -33,6 +35,7 @@ export type ArrowsOptions = {
 	container: HTMLElement | null,
 	containerPrev: HTMLElement | null,
 	containerNext: HTMLElement | null,
+	movementType: ArrowsMovementTypes,
 };
 
 export default function ArrowsPlugin( args: { [key: string]: unknown } ) {
@@ -54,6 +57,7 @@ export default function ArrowsPlugin( args: { [key: string]: unknown } ) {
 			container: args?.container ?? null,
 			containerPrev: args?.containerPrev ?? null,
 			containerNext: args?.containerNext ?? null,
+			movementType: args?.movementType ?? 'view',
 		};
 
 		const nav = document.createElement( 'div' );
@@ -68,7 +72,7 @@ export default function ArrowsPlugin( args: { [key: string]: unknown } ) {
 		prev.innerHTML = slider.options.rtl ? options.icons.next : options.icons.prev;
 		prev.addEventListener( 'click', () => {
 			if ( prev.getAttribute('data-has-content') === 'true' ) {
-				slider.moveToDirection( 'prev' );
+				options.movementType === 'slide' ? slider.moveToSlideInDirection( 'prev' ) : slider.moveToDirection( 'prev' );
 			}
 		} );
 
@@ -81,7 +85,7 @@ export default function ArrowsPlugin( args: { [key: string]: unknown } ) {
 		next.innerHTML = slider.options.rtl ? options.icons.prev : options.icons.next;
 		next.addEventListener( 'click', () => {
 			if ( next.getAttribute('data-has-content') === 'true' ) {
-				slider.moveToDirection( 'next' );
+				options.movementType === 'slide' ? slider.moveToSlideInDirection( 'next' ) : slider.moveToDirection( 'next' );
 			}
 		} );
 

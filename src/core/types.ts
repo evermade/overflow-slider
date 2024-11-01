@@ -5,6 +5,9 @@ export type Slider<O = {}, C = {}, H extends string = string> = {
 	moveToDirection: (
 		direction: 'prev' | 'next'
 	) => void
+	moveToSlideInDirection: (
+		direction: 'prev' | 'next'
+	) => void
 	snapToClosestSlide: (
 		direction: 'prev' | 'next'
 	) => void

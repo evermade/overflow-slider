@@ -305,6 +305,19 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		}
 	};
 
+	function moveToSlideInDirection( direction: 'prev' | 'next' ) {
+		const activeSlideIdx = slider.activeSlideIdx;
+		if (direction === 'prev') {
+			if (activeSlideIdx > 0) {
+				moveToSlide(activeSlideIdx - 1);
+			}
+		} else if (direction === 'next') {
+			if (activeSlideIdx < slider.slides.length - 1) {
+				moveToSlide(activeSlideIdx + 1);
+			}
+		}
+	}
+
 	function getInclusiveScrollWidth() : number {
 		return slider.container.scrollWidth + getOutermostChildrenEdgeMarginSum(slider.container);
 	};
@@ -512,6 +525,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		emit,
 		moveToDirection,
 		moveToSlide,
+		moveToSlideInDirection,
 		snapToClosestSlide,
 		getInclusiveScrollWidth,
 		getInclusiveClientWidth,

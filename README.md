@@ -458,8 +458,10 @@ Auto-play is not supported at the moment but can probably be implemented as a pl
 
 ### 3.3.0
 
-* Refactor: Plugin build paths to match import paths as this caused some eslint warnings in projects. Import paths remain the same so no changes needed in projects.
+* Add: Ability to move each direction by one slide at a time via `moveToSlideInDirection` prev/next
+* Add: Support for ArrowsPlugin to move by one slide at a time (default is still one view at a time)
 * Fix: Remove console logs
+* Refactor: Plugin build paths to match import paths. Might fix some eslint warnings. If you are not using import but directly referencing the plugin files under `dist/` you might need to update your paths.
 
 ### 3.2.1
 
