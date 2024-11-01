@@ -209,6 +209,7 @@ type ArrowsOptions = {
 	container: HTMLElement | null, // container for both arrows
 	containerPrev: HTMLElement | null, // container for previous arrow
 	containerNext: HTMLElement | null, // container for next arrow
+	movementType: 'view' | 'slide', // default 'view', how much to move when arrow is clicked
 };
 ```
 
