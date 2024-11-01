@@ -1,6 +1,6 @@
 {
 	"name": "@evermade/overflow-slider",
-	"version": "3.3.0",
+	"version": "3.3.1",
 	"description": "Accessible slider tha works with overflow: auto.",
 	"type": "module",
 	"main": "dist/index.js",
