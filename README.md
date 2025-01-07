@@ -123,7 +123,7 @@ This is based on getting the container width and dividing it by the number of sl
 Mixin:
 
 ```scss
-@mixin slideWidth($slidesPerView: 3, $gap: var(--slide-gap, 1rem), $containerWidth: var(--slider-container-width, 90vw)) {
+@mixin slide-width($slidesPerView: 3, $gap: var(--slide-gap, 1rem), $containerWidth: var(--slider-container-width, 90vw)) {
 	width: calc( ( #{$containerWidth} / #{$slidesPerView} ) - calc( #{$slidesPerView} - 1 ) / #{$slidesPerView} * #{$gap});
 }
 ```
@@ -136,7 +136,7 @@ Usage:
 	gap: var(--gap);
 	> * {
 		--slides-per-view: 3;
-		@include slideWidth(
+		@include slide-width(
 			var(--slides-per-view),
 			var(--gap),
 			var(--slider-container-width)
