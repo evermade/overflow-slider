@@ -95,57 +95,95 @@ const slider = new OverflowSlider(
 You can import base styles from the library to get started. The base styles include basic styles for the slider and some plugins.
 
 ```scss
-@import "@evermade/overflow-slider/style.css";
+@use "@evermade/overflow-slider/style.css";
 ```
 
 You can use the CSS variables to override some values easily.
 
 Note that you can easily write styles from scratch if you want to. See source code from `src/overflow-slider.scss` for reference.
 
-## Slides per view
+## Mixins
 
-You control slides per view in CSS. Set gap between slides via `gap` to slider. Slide layout/size is controlled by `width` property. You can use others but `width` is the most stable.
-
-### A) Fixed width
-
-Set fixed width for slides: `width: 200px;`. Note you can freely change this with media queries.
-
-### B) Relative width
-
-Set relative width for slides: `width: 100vw;`. Note that you cannot use percentages because they are relative to the container and not the viewport.
-
-### C) Variable based width
-
-This is most practical approach if you want to make sure exactly 3 slides are visible at all times or so. Or you want to display like 1.5 slides in mobile per view.
-
-This is based on getting the container width and dividing it by the number of slides you want to show and subtracting the gap. It's recommended to add SCSS mixin for this in case you are using SCSS.
-
-Mixin:
+If you are using SCSS, you can use these helpers.
 
 ```scss
-@mixin slide-width($slidesPerView: 3, $gap: var(--slide-gap, 1rem), $containerWidth: var(--slider-container-width, 90vw)) {
+@use "@evermade/overflow-slider/mixins";
+```
+
+### slide-width
+
+```scss
+@mixin os-slide-width($slidesPerView: 3, $gap: var(--slide-gap, 1rem), $containerWidth: var(--slider-container-width, 90vw)) {
 	width: calc( ( #{$containerWidth} / #{$slidesPerView} ) - calc( #{$slidesPerView} - 1 ) / #{$slidesPerView} * #{$gap});
 }
 ```
 
-Usage:
+Set slide width based on slides per view (more below)
+
+### os-break-out-full-width
+
+Make slider container full width via breaking out of the container that has max-width set.
+
+```scss
+@mixin os-break-out-full-width {
+	position: relative;
+	left: 50%;
+	width: 100vw;
+	margin-left: -50vw;
+}
+```
+
+## Slides per view
+
+You control slides per view in CSS. Set gap between slides via `gap` to slider element. Note that you cannot use percentages (like 33.33%) for width because they are relative to the container and not the viewport.
+
+### A) Slides per view approach
+
+This is most practical approach and relies on some calculations. Setting target width for slider container is recommended as that makes the calculations more stable as otherwise container width can depend on slides and if slides then depend on container width that can lead some issues.
+
+Setting target width can be done for example referencing another HTML element in page and copying its width:
+
+```js
+const blockWrapper = document.querySelector( '.block-wrapper' );
+OverflowSlider(
+	sliderContainer,
+	{
+		targetWidth: () => {
+				return (blockWrapper).offsetWidth;
+		},
+	}
+);
+```
+
+This creates a `--slider-container-target-width` variable that is now stable.
+
+Use mixin `os-slide-width` 
 
 ```scss
 .overflow-slider {
 	--gap: 1.5rem;
 	gap: var(--gap);
 	> * {
-		--slides-per-view: 3;
-		@include slide-width(
+		--slides-per-view: 1.5;
+		@include os-slide-width(
 			var(--slides-per-view),
 			var(--gap),
-			var(--slider-container-width)
+			var(--slider-container-target-width)
 		);
+		@meadia (min-width: 768px) {
+			--slides-per-view: 3;
+		}
 	}
 }
 ```
 
-Note that if you are using FullWidthPlugin, you should use container width from `--slider-container-target-width` instead of `--slider-container-width`.
+### B) Fixed width
+
+Set fixed width for slides: `width: 200px;`. Note you can freely change this with media queries.
+
+### C) Relative width
+
+Set relative width for slides: `width: 100vw;`. Note that you cannot use percentages because they are relative to the container and not the viewport.
 
 ## Plugins
 
@@ -425,6 +463,46 @@ const thumbnailsSlider = new OverflowSlider(
 );
 ```
 
+### AutoplayPlugin
+
+This plugin allows you to automatically scroll the slider. It can be used to create a hero slider that scrolls automatically.
+
+This includes play/pause button and for users that prefer reduced motion, autoplay plugin will not execute.
+
+```ts
+import AutoplayPlugin from '@evermade/overflow-slider/plugins/autoplay';
+const slider = new OverflowSlider(
+ document.querySelector( '.slider-container-here' ),
+ {},
+ [
+	AutoplayPlugin(), // add options here or don't
+ ]
+);
+```
+
+All options are optional.
+
+```ts
+export type AutoplayPluginOptions = {
+	delayInMs: number;
+	texts: {
+		play: string;
+		pause: string;
+	};
+	icons: {
+		play: string;
+		pause: string;
+	};
+	classNames: {
+		autoplayButton: string;
+	};
+	container: HTMLElement | null;
+	movementType: 'view' | 'slide';
+	stopOnHover: boolean;
+	loop: boolean;
+};
+```
+
 ## Known issues
 
 ### CSS grids and Overflow Slider
@@ -439,23 +517,31 @@ If you are using `scroll-snap-type` CSS property, you might encounter some bugs 
 
 ### Vertical scrolling
 
-The library is designed to work with horizontal scrolling. Vertical scrolling is not supported and likely never will because it is not a common use case for sliders.
+The library is designed to work with horizontal scrolling. Vertical scrolling is not supported at the moment. Maybe some day but it's much rarer use case.
 
-### Looping slides
+### Infinite scroll
 
-Looping slides is not supported and likely never will be. It is a feature that is not very common and it is not very accessible.
-
-### Auto-play
-
-Auto-play is not supported at the moment but can probably be implemented as a plugin. It is not very accessible and should be avoided if possible.
+Infinite scroll is not supported and likely never will be. It is a feature that is not very common and it is not very accessible.
 
 ## To-do
 
-* Maybe split styles to separate files for plugins (but keep offering bundle as well)
 * Maybe add plugin that adds class for visible slides
-* Document all plugins and their parameters here
+* Experiment on infinite scroll
 
 ## Changelog
+
+### 4.0.0
+
+* Add: AutoPlayPlugin to allow auto-playing slides
+* Add: Mixins that can be imported to SCSS projects
+* Add: CSS variable: `--slider-container-height`
+* Add: CSS variable: `--slider-x-offset`
+* Add: Option `cssVariableContainer` to expose CSS variables for example higher container
+* Add: `canMoveToSlide` method to check if slider can move to a specific slide (does it exist, is it already in view)
+* Add: `targetWidth` to slider options as relying on `--slider-container-target-width` can be more solid to calculate fractional slide widths on (at least when there is only few slides)
+* Fix: Export TypeScript types properly from core and plugins to be available automatically
+* Fix: ScrollIndicatorPlugin click to scroll bar didn't always detect click position correctly
+* Fix: snapToClosestSlide method edge cases on DragScrollingPlugin sometimes not snapping on right slide
 
 ### 3.3.1
 

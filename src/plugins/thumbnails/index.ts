@@ -1,10 +1,10 @@
-import { Slider } from '../../core/types';
+import { Slider, DeepPartial } from '../../core/types';
 
 export type ThumbnailsOptions = {
 	mainSlider: Slider,
 };
 
-export default function FullWidthPlugin( args: { [key: string]: unknown } ) {
+export default function FullWidthPlugin( args: DeepPartial<ThumbnailsOptions> ) {
 	return ( slider: Slider ) => {
 
 		const options = <ThumbnailsOptions>{

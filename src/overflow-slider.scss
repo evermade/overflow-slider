@@ -3,6 +3,18 @@
  */
 
 /* --------------------------------------------------------------
+# Plugins
+-------------------------------------------------------------- */
+
+@forward 'plugins/arrows/styles.scss';
+@forward 'plugins/autoplay/styles.scss';
+@forward 'plugins/dots/styles.scss';
+@forward 'plugins/fade/styles.scss';
+@forward 'plugins/drag-scrolling/styles.scss';
+@forward 'plugins/scroll-indicator/styles.scss';
+@forward 'plugins/skip-links/styles.scss';
+
+/* --------------------------------------------------------------
 # Core
 -------------------------------------------------------------- */
 
@@ -26,16 +38,6 @@
 	}
 }
 
-/* --------------------------------------------------------------
-# Plugins
--------------------------------------------------------------- */
-
-@import 'plugins/arrows/styles.scss';
-@import 'plugins/dots/styles.scss';
-@import 'plugins/fade/styles.scss';
-@import 'plugins/drag-scrolling/styles.scss';
-@import 'plugins/scroll-indicator/styles.scss';
-@import 'plugins/skip-links/styles.scss';
 
 
 

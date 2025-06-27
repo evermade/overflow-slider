@@ -1,4 +1,4 @@
-import { Slider } from '../../core/types';
+import { Slider, DeepPartial } from '../../core/types';
 
 const DEFAULT_TARGET_WIDTH = ( slider: Slider ) => slider.container.parentElement?.offsetWidth ?? window.innerWidth;
 
@@ -8,11 +8,11 @@ export type FullWidthOptions = {
 	addMarginAfter: boolean,
 };
 
-export default function FullWidthPlugin( args: { [key: string]: unknown } ) {
+export default function FullWidthPlugin( args?: DeepPartial<FullWidthOptions> ) {
 	return ( slider: Slider ) => {
 
 		const options = <FullWidthOptions>{
-			targetWidth: args?.targetWidth ?? DEFAULT_TARGET_WIDTH,
+			targetWidth: args?.targetWidth ?? null,
 			addMarginBefore: args?.addMarginBefore ?? true,
 			addMarginAfter: args?.addMarginAfter ?? true,
 		};
@@ -27,7 +27,7 @@ export default function FullWidthPlugin( args: { [key: string]: unknown } ) {
 			const firstSlide = slides[0] as HTMLElement;
 			const lastSlide = slides[slides.length - 1] as HTMLElement;
 
-			const marginAmount = Math.floor((window.innerWidth - options.targetWidth(slider)) / 2);
+			const marginAmount = Math.floor((window.innerWidth - getTargetWidth()) / 2);
 			if ( options.addMarginBefore ) {
 				firstSlide.style.marginInlineStart = `${marginAmount}px`;
 			}
@@ -38,8 +38,20 @@ export default function FullWidthPlugin( args: { [key: string]: unknown } ) {
 			setCSS();
 		};
 
+		const getTargetWidth = () => {
+			if ( typeof options.targetWidth === 'function' ) {
+				return options.targetWidth(slider);
+			}
+			if ( typeof slider.options.targetWidth  === 'function' ) {
+				return slider.options.targetWidth(slider);
+			}
+			return DEFAULT_TARGET_WIDTH(slider);
+		}
+
 		const setCSS = () => {
-			slider.container.style.setProperty('--slider-container-target-width', `${options.targetWidth(slider)}px`);
+			if ( typeof slider.options.targetWidth  === 'function' ) {
+				slider.options.cssVariableContainer.style.setProperty('--slider-container-target-width', `${getTargetWidth()}px`);
+			}
 		};
 
 		update();

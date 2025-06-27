@@ -1,4 +1,4 @@
-import { Slider } from '../../core/types';
+import { Slider, DeepPartial } from '../../core/types';
 
 export type DotsOptions = {
 	texts: {
@@ -20,7 +20,7 @@ const DEFAULT_CLASS_NAMES = {
 	dotsItem: 'overflow-slider__dot-item',
 };
 
-export default function DotsPlugin( args: { [key: string]: unknown } ) {
+export default function DotsPlugin( args?: DeepPartial<DotsOptions> ) {
 	return ( slider: Slider ) => {
 		const options = <DotsOptions>{
 			texts: {

@@ -370,6 +370,77 @@ h3:before {
 	gap: 1rem;
 }
 
+.overflow-slider__autoplay {
+	--autoplay-bg-color: #e5e5e5;
+	--autoplay-progress-color: #303030;
+	--autoplay-icon-color: #303030;
+	cursor: pointer;
+	border-radius: 50%;
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border: none;
+	background: var(--autoplay-bg-color);
+	color: var(--autoplay-icon-color);
+	/* ensure the pseudo-element paints on its own layer */
+	will-change: background;
+}
+
+.overflow-slider__autoplay::before {
+	content: "";
+
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	/* draw the circular progress using conic-gradient */
+	background:
+		conic-gradient(
+			var(--autoplay-progress-color) calc(var(--autoplay-delay-progress) * 1%),
+			transparent 0
+		);
+	/* rotate so “0%” starts at top */
+	transform: rotate(-90deg);
+}
+
+.overflow-slider__autoplay::after {
+	content: "";
+	position: absolute;
+	border-radius: 50%;
+	left: 10%;
+	width: 80%;
+	height: 80%;
+	top: 10%;
+	background: var(--autoplay-bg-color);
+}
+
+.overflow-slider__autoplay:hover,
+.overflow-slider__autoplay:focus {
+	background: var(--color-primary);
+}
+
+.overflow-slider__autoplay:hover::before,
+.overflow-slider__autoplay:focus::before {
+	background: transparent;
+}
+
+.overflow-slider__autoplay:hover::after,
+.overflow-slider__autoplay:focus::after {
+	background: transparent;
+}
+
+.overflow-slider__autoplay svg {
+	position: absolute;
+	z-index: 2;
+	width: 1.25rem;
+	height: 1.25rem;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
 .example-item {
 	aspect-ratio: 3/4;
 	width: 240px;
@@ -451,9 +522,19 @@ h3:before {
 	grid-template-columns: repeat(var(--slider-slides-count, 1), var(--slider-container-width, 900px));
 }
 
+.example-container-1-autoplay-wrap-view,
+.example-container-1-autoplay-wrap-slide {
+	margin-top: 16px;
+}
+
 .example-container-1-dots .example-item {
 	aspect-ratio: 16/7;
 	width: 100%;
+}
+
+.example-container-1-infinite > * {
+	width: var(--slider-container-width, 400px);
+	aspect-ratio: 16/8;
 }
 
 .example-container-1-fade-wrap {
@@ -682,4 +763,38 @@ h3:before {
 	opacity: 1 !important;
 	background: var(--color-grey-800);
 	color: #fff;
+}
+
+/* ===========================================================================
+  Example 4: Hero
+=========================================================================== */
+
+.example-container-4-hero__wrapper {
+	position: relative;
+}
+
+.example-container-4-hero {
+	--slider-gap: 0;
+	gap: 0;
+}
+
+.example-container-4-hero > * {
+	width: var(--slider-container-width, 900px);
+	aspect-ratio: 16/9;
+}
+
+.example-container-4-hero__autoplay {
+	position: absolute;
+	bottom: 1rem;
+	right: 1rem;
+}
+
+.example-container-4-hero__dots {
+	z-index: 10;
+	position: absolute;
+	bottom: 1rem;
+	left: 50%;
+	transform: translateX(-50%);
+	--overflow-slider-dot-inactive-color: rgba(0, 0, 0, 0.2);
+	--overflow-slider-dot-active-color: rgba(0, 0, 0, .8);
 }

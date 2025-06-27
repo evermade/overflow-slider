@@ -1,8 +1,8 @@
-import { Slider, SliderOptions, SliderPlugin, SliderCallback } from './types';
+import { Slider, SliderOptions, SliderOptionArgs, SliderPlugin, SliderCallback } from './types';
 import details from './details';
 import { generateId, objectsAreEqual, getOutermostChildrenEdgeMarginSum } from './utils';
 
-export default function Slider( container: HTMLElement, options : SliderOptions, plugins? : SliderPlugin[] ) {
+export default function Slider( container: HTMLElement, options : SliderOptionArgs, plugins? : SliderPlugin[] ) {
 	let slider: Slider;
 	let subs: { [key: string]: SliderCallback[] } = {};
 
@@ -65,7 +65,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 	};
 
 	function setSlides() {
-		slider.slides = Array.from(slider.container.querySelectorAll(slider.options.slidesSelector));
+		slider.slides = Array.from(slider.container.querySelectorAll(slider.options.slidesSelector)) as HTMLElement[];
 	}
 
 	function addEventListeners() {
@@ -200,9 +200,14 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 	};
 
 	function setCSSVariables() {
-		slider.container.style.setProperty('--slider-container-width', `${slider.details.containerWidth}px`);
-		slider.container.style.setProperty('--slider-scrollable-width', `${slider.details.scrollableAreaWidth}px`);
-		slider.container.style.setProperty('--slider-slides-count', `${slider.details.slideCount}`);
+		slider.options.cssVariableContainer.style.setProperty('--slider-container-height', `${slider.details.containerHeight}px`);
+		slider.options.cssVariableContainer.style.setProperty('--slider-container-width', `${slider.details.containerWidth}px`);
+		slider.options.cssVariableContainer.style.setProperty('--slider-scrollable-width', `${slider.details.scrollableAreaWidth}px`);
+		slider.options.cssVariableContainer.style.setProperty('--slider-slides-count', `${slider.details.slideCount}`);
+		slider.options.cssVariableContainer.style.setProperty('--slider-x-offset', `${getLeftOffset()}px`);
+		if (typeof slider.options.targetWidth  === 'function') {
+	 		slider.options.cssVariableContainer.style.setProperty('--slider-container-target-width', `${slider.options.targetWidth(slider)}px`);
+		}
 	}
 
 	function setDataAttributes() {
@@ -304,6 +309,41 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 			ensureSlideIsInView(slide);
 		}
 	};
+
+	function canMoveToSlide( idx: number ) : boolean {
+		if ( idx < 0 || idx >= slider.slides.length ) {
+			return false;
+		}
+		if (idx === slider.activeSlideIdx) {
+			return false;
+		}
+		const direction = slider.options.rtl ? (idx < slider.activeSlideIdx ? 'backwards' : 'forwards') : (idx < slider.activeSlideIdx ? 'backwards' : 'forwards');
+
+		// check if the slide is already in view
+		const sliderRect = slider.container.getBoundingClientRect();
+		const scrollLeft = slider.getScrollLeft();
+		const containerWidth = slider.details.containerWidth;
+
+		const hasUpcomingContent = slider.slides.some((s, i) => {
+			if (i === slider.activeSlideIdx) {
+				return false; // skip the slide we are checking
+			}
+			const sRect = s.getBoundingClientRect();
+			const sStart = sRect.left - sliderRect.left + scrollLeft;
+			const sEnd = sStart + sRect.width;
+			if (slider.options.rtl) {
+				if ( scrollLeft === 0 && slider.details.hasOverflow ) {
+					return true;
+				}
+				return (direction === 'forwards' && i > slider.activeSlideIdx && Math.floor(sStart) < Math.floor(scrollLeft)) ||
+					(direction === 'backwards' && i < slider.activeSlideIdx && Math.floor(sEnd) > Math.floor(scrollLeft + containerWidth));
+			} else {
+				return (direction === 'forwards' && i > slider.activeSlideIdx && Math.floor(sEnd) > Math.floor(scrollLeft + containerWidth)) ||
+					(direction === 'backwards' && i < slider.activeSlideIdx && Math.floor(sStart) < Math.floor(scrollLeft));
+			}
+		});
+		return hasUpcomingContent;
+	}
 
 	function moveToSlideInDirection( direction: 'prev' | 'next' ) {
 		const activeSlideIdx = slider.activeSlideIdx;
@@ -437,68 +477,53 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 	};
 
 	function snapToClosestSlide(direction = "prev") {
-		const isMovingForward = slider.options.rtl ? direction === 'prev' : direction === 'next';
-		const slideReference = [];
-		for (let i = 0; i < slider.slides.length; i++) {
-			const slide = slider.slides[i];
-			const slideWidth = slide.offsetWidth;
-			const slideStart = slider.options.rtl ? Math.abs( slide.offsetLeft + slideWidth - slider.details.containerWidth ) : slide.offsetLeft;
-			const slideEnd = slideStart + slideWidth;
-			const slideMiddle = slideStart + slideWidth / 2;
-			const trigger = Math.min(slideMiddle, slideStart + slider.options.emulateScrollSnapMaxThreshold);
-			slideReference.push({
-				start: slideStart,
-				middle: slideMiddle,
-				end: slideEnd,
-				width: slideWidth,
-				trigger: trigger,
-				slide: slide,
-				// debug
-				offSetleft: slide.offsetLeft,
-				rect: slide.getBoundingClientRect(),
-			});
-		}
-		let snapTarget = null;
-		const scrollPosition = getScrollLeft();
-		if (isMovingForward) {
-			for (let i = 0; i < slideReference.length; i++) {
-				const item = slideReference[i];
-				if ( i === 0 && Math.floor( scrollPosition ) <= Math.floor( item.trigger ) ) {
-					snapTarget = 0;
-					break;
-				}
-				if ( Math.floor( getScrollLeft() ) <= Math.floor( item.trigger ) ) {
-					snapTarget = item.start;
-					break;
-				}
-			}
+		const { slides, options, container } = slider;
+		const {
+			rtl,
+			emulateScrollSnapMaxThreshold = 10,
+			scrollBehavior = 'smooth',
+		} = options;
+
+		const isForward = rtl ? direction === 'prev' : direction === 'next';
+		const scrollPos = getScrollLeft();
+
+		// Get container rect once (includes any CSS transforms)
+		const containerRect = container.getBoundingClientRect();
+		const factor = rtl ? -1 : 1;
+
+		// Build slide metadata
+		const slideData = [...slides].map(slide => {
+			const { width } = slide.getBoundingClientRect();
+			const slideRect = slide.getBoundingClientRect();
+
+			// position relative to container’s left edge
+			const relativeStart = (slideRect.left - containerRect.left) + scrollPos;
+			const triggerPoint = Math.min(
+				relativeStart + width / 2,
+				relativeStart + emulateScrollSnapMaxThreshold
+			);
+
+			return { start: relativeStart, trigger: triggerPoint };
+		});
+
+		// Pick the target start based on drag direction
+		let targetStart = null;
+
+		if (isForward) {
+			const found = slideData.find(item => scrollPos <= item.trigger);
+			targetStart = found?.start ?? null;
 		} else {
-			for (let i = slideReference.length - 1; i >= 0; i--) {
-				const item = slideReference[i];
-				if ( i === slideReference.length - 1 && Math.floor( scrollPosition ) >= Math.floor( item.trigger ) ) {
-					snapTarget = item.start;
-					break;
-				}
-				if ( Math.floor( getScrollLeft() ) >= Math.floor( item.trigger ) ) {
-					snapTarget = item.start;
-					break;
-				}
-			}
+			const found = [...slideData].reverse().find(item => scrollPos >= item.trigger);
+			targetStart = found?.start ?? null;
 		}
-		if ( snapTarget !== null ) {
-			const offsettedSnapTarget = snapTarget - getLeftOffset();
-			if ( Math.floor( offsettedSnapTarget ) >= 0 ) {
-				snapTarget = offsettedSnapTarget;
-			}
 
-			const scrollBehavior = slider.options.scrollBehavior || 'smooth';
+		if (targetStart == null) return;
 
-			slider.container.scrollTo({
-				left: slider.options.rtl ? -snapTarget : snapTarget,
-				behavior: scrollBehavior as ScrollBehavior
-			});
-		}
-	};
+		// Clamp to zero and apply RTL factor
+		const finalLeft = Math.max(0, Math.floor(targetStart)) * factor;
+
+		container.scrollTo({ left: finalLeft, behavior: scrollBehavior as ScrollBehavior });
+	}
 
 	function on(name: string, cb: SliderCallback) {
 		if (!subs[name]) {
@@ -524,6 +549,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 	slider = <Slider>{
 		emit,
 		moveToDirection,
+		canMoveToSlide,
 		moveToSlide,
 		moveToSlideInDirection,
 		snapToClosestSlide,
@@ -531,6 +557,7 @@ export default function Slider( container: HTMLElement, options : SliderOptions,
 		getInclusiveClientWidth,
 		getScrollLeft,
 		setScrollLeft,
+		setActiveSlideIdx,
 		on,
 		options,
 	};

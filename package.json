@@ -1,7 +1,7 @@
 {
 	"name": "@evermade/overflow-slider",
-	"version": "3.3.1",
-	"description": "Accessible slider tha works with overflow: auto.",
+	"version": "4.0.0",
+	"description": "Accessible slider that is powered by overflow: auto.",
 	"type": "module",
 	"main": "dist/index.js",
 	"module": "dist/index.esm.js",
@@ -9,41 +9,63 @@
 	"exports": {
 		".": {
 			"import": "./dist/index.esm.js",
-			"require": "./dist/index.min.js"
+			"require": "./dist/index.min.js",
+			"types": "./dist/index.d.ts"
 		},
 		"./plugins/drag-scrolling": {
 			"import": "./dist/plugins/drag-scrolling/index.esm.js",
-			"require": "./dist/plugins/drag-scrolling/index.min.js"
+			"require": "./dist/plugins/drag-scrolling/index.min.js",
+			"types": "./dist/plugins/drag-scrolling/index.d.ts"
 		},
 		"./plugins/skip-links": {
 			"import": "./dist/plugins/skip-links/index.esm.js",
-			"require": "./dist/plugins/skip-links/index.min.js"
+			"require": "./dist/plugins/skip-links/index.min.js",
+			"types": "./dist/plugins/skip-links/index.d.ts"
 		},
 		"./plugins/scroll-indicator": {
 			"import": "./dist/plugins/scroll-indicator/index.esm.js",
-			"require": "./dist/plugins/scroll-indicator/index.min.js"
+			"require": "./dist/plugins/scroll-indicator/index.min.js",
+			"types": "./dist/plugins/scroll-indicator/index.d.ts"
 		},
 		"./plugins/arrows": {
 			"import": "./dist/plugins/arrows/index.esm.js",
-			"require": "./dist/plugins/arrows/index.min.js"
+			"require": "./dist/plugins/arrows/index.min.js",
+			"types": "./dist/plugins/arrows/index.d.ts"
+		},
+		"./plugins/autoplay": {
+			"import": "./dist/plugins/autoplay/index.esm.js",
+			"require": "./dist/plugins/autoplay/index.min.js",
+			"types": "./dist/plugins/autoplay/index.d.ts"
 		},
 		"./plugins/full-width": {
 			"import": "./dist/plugins/full-width/index.esm.js",
-			"require": "./dist/plugins/full-width/index.min.js"
+			"require": "./dist/plugins/full-width/index.min.js",
+			"types": "./dist/plugins/full-width/index.d.ts"
 		},
 		"./plugins/dots": {
 			"import": "./dist/plugins/dots/index.esm.js",
-			"require": "./dist/plugins/dots/index.min.js"
+			"require": "./dist/plugins/dots/index.min.js",
+			"types": "./dist/plugins/dots/index.d.ts"
 		},
 		"./plugins/thumbnails": {
 			"import": "./dist/plugins/thumbnails/index.esm.js",
-			"require": "./dist/plugins/thumbnails/index.min.js"
+			"require": "./dist/plugins/thumbnails/index.min.js",
+			"types": "./dist/plugins/thumbnails/index.d.ts"
 		},
 		"./plugins/fade": {
 			"import": "./dist/plugins/fade/index.esm.js",
-			"require": "./dist/plugins/fade/index.min.js"
+			"require": "./dist/plugins/fade/index.min.js",
+			"types": "./dist/plugins/fade/index.d.ts"
 		},
-		"./style.css": "./dist/overflow-slider.css"
+		"./plugins/infinite-scroll": {
+			"import": "./dist/plugins/infinite-scroll/index.esm.js",
+			"require": "./dist/plugins/infinite-scroll/index.min.js",
+			"types": "./dist/plugins/infinite-scroll/index.d.ts"
+		},
+		"./style.css": "./dist/overflow-slider.css",
+		"./style": "./dist/overflow-slider.css",
+		"./mixins.scss": "./dist/mixins.scss",
+		"./mixins": "./dist/mixins.scss"
 	},
 	"repository": {
 		"type": "git",
@@ -53,11 +75,11 @@
 		"overflow-slider"
 	],
 	"scripts": {
-		"build": "rollup -c",
+		"build": "rollup -c --bundleConfigAsCjs",
 		"compress": "gzip -9 -fkc dist/index.min.js > dist/index.min.js.gz",
 		"show": "ls -lh dist/index.min.js.gz | awk '{print \"Gzipped script size:\", $5\"B\"}'",
 		"size": "npm run build -- --silent && npm run compress --silent && npm run show && rm dist/index.min.js.gz",
-		"watch": "rollup -c -w",
+		"start": "rollup -c -w --bundleConfigAsCjs",
 		"test": "echo \"No tests specified\" && exit 0"
 	},
 	"author": "Teemu Suoranta, Evermade",
@@ -66,21 +88,22 @@
 		"url": "https://github.com/evermade/overflow-slider/issues"
 	},
 	"devDependencies": {
-		"@rollup/plugin-commonjs": "^24.0.0",
-		"@rollup/plugin-node-resolve": "^15.0.0",
-		"@rollup/plugin-typescript": "^11.1.2",
-		"@tsconfig/recommended": "^1.0.2",
-		"@wordpress/eslint-plugin": "^14.3.0",
-		"@wordpress/prettier-config": "^2.13.0",
-		"autoprefixer": "^10.4.17",
-		"cssnano": "^6.0.3",
-		"eslint": "^8.37.0",
-		"rollup": "^2.79.1",
+		"@rollup/plugin-commonjs": "^28.0.6",
+		"@rollup/plugin-node-resolve": "^16.0.1",
+		"@rollup/plugin-terser": "^0.4.4",
+		"@rollup/plugin-typescript": "^12.1.3",
+		"@tsconfig/recommended": "^1.0.10",
+		"@wordpress/eslint-plugin": "^22.11.0",
+		"@wordpress/prettier-config": "^4.25.0",
+		"autoprefixer": "^10.4.21",
+		"cssnano": "^7.0.7",
+		"eslint": "^9.29.0",
+		"rollup": "^4.44.0",
 		"rollup-plugin-copy": "^3.5.0",
+		"rollup-plugin-dts": "^6.2.1",
 		"rollup-plugin-postcss": "^4.0.2",
-		"rollup-plugin-terser": "^7.0.2",
-		"sass": "^1.70.0",
-		"typescript": "^5.1.6"
+		"sass": "^1.89.2",
+		"typescript": "^5.8.3"
 	},
 	"homepage": "https://github.com/evermade/overflow-slider#readme",
 	"publishConfig": {

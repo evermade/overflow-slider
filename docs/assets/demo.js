@@ -14,11 +14,13 @@ import { OverflowSlider } from '../dist/index.esm.js';
 import DragScrollingPlugin from '../dist/plugins/drag-scrolling/index.esm.js';
 import SkipLinksPlugin from '../dist/plugins/skip-links/index.esm.js';
 import ArrowsPlugin from '../dist/plugins/arrows/index.esm.js';
+import AutoplayPlugin from '../dist/plugins/autoplay/index.esm.js';
 import ScrollIndicatorPlugin from '../dist/plugins/scroll-indicator/index.esm.js';
 import DotsPlugin from '../dist/plugins/dots/index.esm.js';
 import FullWidthPlugin from '../dist/plugins/full-width/index.esm.js';
 import ThumbnailsPlugin from '../dist/plugins/thumbnails/index.esm.js';
 import FadePlugin from '../dist/plugins/fade/index.esm.js';
+// import InfiniteScrollPlugin from '../dist/plugins/infinite-scroll/index.esm.js';
 
 (function () {
 	const init = () => {
@@ -132,6 +134,53 @@ import FadePlugin from '../dist/plugins/fade/index.esm.js';
 			]
 		);
 		console.log( '1-fade', example1Fade );
+
+		const example1AutoplaySlide = new OverflowSlider(
+			document.querySelector( '.example-container-1-autoplay-slide' ),
+			{
+				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
+			},
+			[
+				DragScrollingPlugin(),
+				AutoplayPlugin({
+					movementType: 'slide',
+				})
+			]
+		);
+		console.log( '1-autoplay-slide', example1AutoplaySlide );
+
+		const example1AutoplayView = new OverflowSlider(
+			document.querySelector( '.example-container-1-autoplay-view' ),
+			{
+				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
+			},
+			[
+				DragScrollingPlugin(),
+				AutoplayPlugin()
+			]
+		);
+		console.log( '1-autoplay-view', example1AutoplayView );
+
+		// const example1Infinite = new OverflowSlider(
+		// 	document.querySelector( '.example-container-1-infinite' ),
+		// 	{
+		// 		emulateScrollSnap: true,
+		// 		rtl: document.documentElement.dir === 'rtl',
+		// 	},
+		// 	[
+		// 		DragScrollingPlugin(),
+		// 		AutoplayPlugin({
+		// 			movementType: 'slide',
+		// 			delayInMs: 1000,
+		// 			// loop: false, // infinite should loop it
+		// 		}),
+		// 		ScrollIndicatorPlugin(),
+		// 		InfiniteScrollPlugin(),
+		// 	]
+		// );
+		// console.log( '1-infinite', example1Infinite );
 
 		const example2PerfectFit = new OverflowSlider(
 			document.querySelector( '.example-container-2-perfect-fit' ),
@@ -281,6 +330,25 @@ import FadePlugin from '../dist/plugins/fade/index.esm.js';
 			]
 		);
 		console.log( '4-synced-thumbnails', example4SyncedThumbnails );
+
+		const example4Hero = new OverflowSlider(
+			document.querySelector( '.example-container-4-hero' ),
+			{
+				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
+			},
+			[
+				DragScrollingPlugin(),
+				DotsPlugin({
+					container: document.querySelector( '.example-container-4-hero__dots' ),
+				}),
+				AutoplayPlugin({
+					movementType: 'slide',
+					container: document.querySelector( '.example-container-4-hero__autoplay' ),
+				})
+			]
+		);
+		console.log( '4-hero', example4Hero );
 
 	};
 

@@ -1,13 +1,14 @@
 import Slider from './slider';
 
 import {
+	SliderOptionArgs,
   SliderOptions,
   SliderPlugin,
 } from './types';
 
 export default function OverflowSlider (
 	container: HTMLElement,
-	options?: SliderOptions,
+	options?: SliderOptionArgs,
 	plugins?: SliderPlugin[]
 ) {
 	try {
@@ -17,7 +18,8 @@ export default function OverflowSlider (
 			throw new Error(`Container must be HTML element, found ${typeof container}`);
 		}
 
-		const defaults = {
+		const defaults: SliderOptionArgs = {
+			cssVariableContainer: container,
 			scrollBehavior: "smooth",
 			scrollStrategy: "fullSlide",
 			slidesSelector: ":scope > *",

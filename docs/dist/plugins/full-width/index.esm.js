@@ -3,7 +3,7 @@ function FullWidthPlugin(args) {
     return (slider) => {
         var _a, _b, _c;
         const options = {
-            targetWidth: (_a = args === null || args === void 0 ? void 0 : args.targetWidth) !== null && _a !== void 0 ? _a : DEFAULT_TARGET_WIDTH,
+            targetWidth: (_a = args === null || args === void 0 ? void 0 : args.targetWidth) !== null && _a !== void 0 ? _a : null,
             addMarginBefore: (_b = args === null || args === void 0 ? void 0 : args.addMarginBefore) !== null && _b !== void 0 ? _b : true,
             addMarginAfter: (_c = args === null || args === void 0 ? void 0 : args.addMarginAfter) !== null && _c !== void 0 ? _c : true,
         };
@@ -14,7 +14,7 @@ function FullWidthPlugin(args) {
             }
             const firstSlide = slides[0];
             const lastSlide = slides[slides.length - 1];
-            const marginAmount = Math.floor((window.innerWidth - options.targetWidth(slider)) / 2);
+            const marginAmount = Math.floor((window.innerWidth - getTargetWidth()) / 2);
             if (options.addMarginBefore) {
                 firstSlide.style.marginInlineStart = `${marginAmount}px`;
             }
@@ -24,8 +24,19 @@ function FullWidthPlugin(args) {
             slider.container.setAttribute('data-full-width-offset', marginAmount.toString());
             setCSS();
         };
+        const getTargetWidth = () => {
+            if (typeof options.targetWidth === 'function') {
+                return options.targetWidth(slider);
+            }
+            if (typeof slider.options.targetWidth === 'function') {
+                return slider.options.targetWidth(slider);
+            }
+            return DEFAULT_TARGET_WIDTH(slider);
+        };
         const setCSS = () => {
-            slider.container.style.setProperty('--slider-container-target-width', `${options.targetWidth(slider)}px`);
+            if (typeof slider.options.targetWidth === 'function') {
+                slider.options.cssVariableContainer.style.setProperty('--slider-container-target-width', `${getTargetWidth()}px`);
+            }
         };
         update();
         slider.on('contentsChanged', update);

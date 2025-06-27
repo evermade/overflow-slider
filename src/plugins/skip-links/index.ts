@@ -1,4 +1,4 @@
-import { Slider } from '../../core/types';
+import { Slider, DeepPartial } from '../../core/types';
 import { generateId } from '../../core/utils';
 
 const DEFAULT_TEXTS = {
@@ -22,7 +22,7 @@ export type SkipLinkOptions = {
 	containerAfter: HTMLElement | null,
 };
 
-export default function SkipLinksPlugin( args: { [key: string]: unknown } ) {
+export default function SkipLinksPlugin( args?: DeepPartial<SkipLinkOptions> ) {
 	return ( slider: Slider ) => {
 		const options = <SkipLinkOptions>{
 			texts: {

@@ -1,4 +1,4 @@
-import { Slider } from '../../core/types';
+import { Slider, DeepPartial } from '../../core/types';
 
 const DEFAULT_TEXTS = {
 	buttonPrevious: 'Previous items',
@@ -38,7 +38,7 @@ export type ArrowsOptions = {
 	movementType: ArrowsMovementTypes,
 };
 
-export default function ArrowsPlugin( args: { [key: string]: unknown } ) {
+export default function ArrowsPlugin( args?: DeepPartial<ArrowsOptions> ) {
 	return ( slider: Slider ) => {
 
 		const options = <ArrowsOptions>{

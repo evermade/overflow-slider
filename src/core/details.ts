@@ -7,6 +7,7 @@ export default function details( slider: Slider) {
 	let hasOverflow = false;
 	let slideCount = 0;
 	let containerWidth = 0;
+	let containerHeight = 0;
 	let scrollableAreaWidth = 0;
 	let amountOfPages = 0;
 	let currentPage = 1;
@@ -18,6 +19,8 @@ export default function details( slider: Slider) {
 	slideCount = slider.slides.length ?? 0;
 
 	containerWidth = slider.container.offsetWidth;
+
+	containerHeight = slider.container.offsetHeight;
 
 	scrollableAreaWidth = slider.getInclusiveScrollWidth();
 
@@ -35,6 +38,7 @@ export default function details( slider: Slider) {
 		hasOverflow,
 		slideCount,
 		containerWidth,
+		containerHeight,
 		scrollableAreaWidth,
 		amountOfPages,
 		currentPage,

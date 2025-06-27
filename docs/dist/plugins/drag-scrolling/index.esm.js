@@ -22,7 +22,7 @@ function DragScrollingPlugin(args) {
                 return;
             }
             isMouseDown = true;
-            startX = e.pageX - slider.container.offsetLeft;
+            startX = e.pageX - slider.container.getBoundingClientRect().left;
             scrollLeft = slider.container.scrollLeft;
             // change cursor to grabbing
             slider.container.style.cursor = 'grabbing';
@@ -45,7 +45,7 @@ function DragScrollingPlugin(args) {
                 programmaticScrollStarted = true;
                 slider.emit('programmaticScrollStart');
             }
-            const x = e.pageX - slider.container.offsetLeft;
+            const x = e.pageX - slider.container.getBoundingClientRect().left;
             const walk = (x - startX);
             const newScrollLeft = scrollLeft - walk;
             mayNeedToSnap = true;

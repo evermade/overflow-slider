@@ -1,4 +1,4 @@
-import { Slider } from '../../core/types';
+import { Slider, DeepPartial } from '../../core/types';
 
 const DEFAULT_DRAGGED_DISTANCE_THAT_PREVENTS_CLICK = 20;
 
@@ -6,7 +6,7 @@ export type DragScrollingOptions = {
 	draggedDistanceThatPreventsClick: number,
 };
 
-export default function DragScrollingPlugin( args: { [key: string]: unknown } ) {
+export default function DragScrollingPlugin( args?: DeepPartial<DragScrollingOptions> ) {
 	const options = <DragScrollingOptions>{
 		draggedDistanceThatPreventsClick: args?.draggedDistanceThatPreventsClick ?? DEFAULT_DRAGGED_DISTANCE_THAT_PREVENTS_CLICK,
 	};
@@ -31,7 +31,7 @@ export default function DragScrollingPlugin( args: { [key: string]: unknown } ) 
 				return;
 			}
 			isMouseDown = true;
-			startX = e.pageX - slider.container.offsetLeft;
+			startX = e.pageX - slider.container.getBoundingClientRect().left;
 			scrollLeft = slider.container.scrollLeft;
 			// change cursor to grabbing
 			slider.container.style.cursor = 'grabbing';
@@ -55,7 +55,7 @@ export default function DragScrollingPlugin( args: { [key: string]: unknown } ) 
 				programmaticScrollStarted = true;
 				slider.emit('programmaticScrollStart');
 			}
-			const x = e.pageX - slider.container.offsetLeft;
+			const x = e.pageX - slider.container.getBoundingClientRect().left;
 			const walk = (x - startX);
 			const newScrollLeft = scrollLeft - walk;
 			mayNeedToSnap = true;

@@ -1,4 +1,4 @@
-import { Slider } from '../../core/types';
+import { Slider, DeepPartial } from '../../core/types';
 
 export type FadeOptions = {
 	classNames: {
@@ -11,7 +11,7 @@ export type FadeOptions = {
 	containerEnd: HTMLElement | null,
 };
 
-export default function FadePlugin( args: { [key: string]: unknown } ) {
+export default function FadePlugin( args?: DeepPartial<FadeOptions> ) {
 	return ( slider: Slider ) => {
 
 		const options = <FadeOptions>{

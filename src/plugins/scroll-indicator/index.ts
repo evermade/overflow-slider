@@ -1,4 +1,4 @@
-import { Slider } from '../../core/types';
+import { Slider, DeepPartial } from '../../core/types';
 
 const DEFAULT_CLASS_NAMES = {
 	scrollIndicator: 'overflow-slider__scroll-indicator',
@@ -15,7 +15,7 @@ export type ScrollIndicatorOptions = {
 	container: HTMLElement | null,
 };
 
-export default function ScrollIndicatorPlugin(args: { [key: string]: unknown }) {
+export default function ScrollIndicatorPlugin(args?: DeepPartial<ScrollIndicatorOptions>) {
 	return (slider: Slider) => {
 
 		const options = <ScrollIndicatorOptions>{
@@ -112,10 +112,12 @@ export default function ScrollIndicatorPlugin(args: { [key: string]: unknown }) 
 			const scrollbarButtonWidth = scrollbarButton.offsetWidth;
 			const scrollbarButtonLeft = getScrollbarButtonLeftOffset();
 			const scrollbarButtonRight = scrollbarButtonLeft + scrollbarButtonWidth;
-			const clickX = e.pageX - Math.abs( scrollbarContainer.offsetLeft );
+			const clickX = (e as MouseEvent).pageX - scrollbarContainer.getBoundingClientRect().left;
 			if (Math.floor(clickX) < Math.floor(scrollbarButtonLeft)) {
+				console.log('move left');
 				slider.moveToDirection(slider.options.rtl ? 'next' : 'prev');
 			} else if (Math.floor(clickX) > Math.floor(scrollbarButtonRight)) {
+				console.log('move right');
 				slider.moveToDirection(slider.options.rtl ? 'prev' : 'next');
 			}
 		});

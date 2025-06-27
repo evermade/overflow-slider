@@ -1,79 +1,103 @@
-import { terser } from 'rollup-plugin-terser';
+// rollup.config.js
+import path from 'path';
+import glob from 'glob';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import postcss from 'rollup-plugin-postcss';
 import copy from 'rollup-plugin-copy';
-import glob from 'glob';
+import terser from '@rollup/plugin-terser';
+import { dts } from 'rollup-plugin-dts';
+
+// Define core entry and plugin entries separately
+const coreInput = 'src/index.ts';
+const pluginInputs = glob
+	.sync('src/plugins/*/index.ts')
+	.reduce((out, file) => {
+		const name = path.basename(path.dirname(file));
+		out[name] = file;
+		return out;
+	}, {});
+// For declarations, include both core and plugins
+const allEntries = { index: coreInput, ...pluginInputs };
 
 const plugins = [
-		typescript(),
-		nodeResolve(),
-		commonjs({ include: 'node_modules/**' }),
-		postcss({
-				extract: 'overflow-slider.css',
-				plugins: [
-						require('autoprefixer'),
-						require('cssnano')({ preset: 'default', }),
-				],
-				minimize: true,
-				sourceMap: false,
-				extensions: ['.scss', '.css'],
-		}),
-		copy({
-				targets: [
-						{
-							src: 'dist/*',
-							dest: 'docs/dist',
-						},
-				],
-				hook: 'writeBundle'
-		})
+	typescript({
+		tsconfig: './tsconfig.json',
+		declaration: false,
+		declarationMap: false,
+	}),
+	nodeResolve(),
+	commonjs({ include: 'node_modules/**' }),
+	postcss({
+		extract: 'overflow-slider.css',
+		plugins: [ require('autoprefixer'), require('cssnano')({ preset: 'default' }) ],
+		minimize: true,
+		sourceMap: false,
+		extensions: ['.scss', '.css'],
+	}),
+	copy({ targets: [{ src: 'dist/*', dest: 'docs/dist' }], hook: 'writeBundle' }),
+	copy({
+		targets: [
+			{ src: 'src/mixins.scss', dest: 'dist' },
+			{ src: 'dist/*', dest: 'docs/dist' },
+		],
+	}),
 ];
 
-// Adjusting here to include the core file
-const pluginEntries = {
-		index: 'src/index.ts', // Adding the core file
-		...glob.sync('src/plugins/**/*.ts').reduce((entries, path) => {
-			const name = path.replace(/^src\/plugins\//, '').replace(/\.ts$/, '');
-			entries[name] = path;
-			return entries;
-		}, {}),
-};
-
-const baseOutput = {
-		preserveModules: true,
-		preserveModulesRoot: 'src',
-};
+// Helper for plugin file naming
+function entryFmt(ext, isMin) {
+	return chunk => {
+		const id = chunk.facadeModuleId;
+		const pluginName = path.basename(path.dirname(id));
+		return `plugins/${pluginName}/index.${ext}.js`;
+	};
+}
 
 export default [
-		{
-				input: pluginEntries,
-				output: {
-						...baseOutput,
-						dir: 'dist',
-						format: 'es',
-						entryFileNames: (chunkInfo) => {
-							return chunkInfo.facadeModuleId.includes('/src/plugins/')
-								? 'index.esm.js'
-								: '[name].esm.js';
-						},
-				},
-				plugins,
+	// —— Flat core ESM build (no internal imports) ——
+	{
+		input: coreInput,
+		output: { file: 'dist/index.esm.js', format: 'es', sourcemap: true, inlineDynamicImports: true },
+		plugins,
+	},
+
+	// —— Flat core CJS build (minified) ——
+	{
+		input: coreInput,
+		output: { file: 'dist/index.min.js', format: 'cjs', sourcemap: true, inlineDynamicImports: true, exports: 'auto' },
+		plugins: [...plugins, terser()],
+	},
+
+	// —— Per-plugin ESM build ——
+	{
+		input: pluginInputs,
+		output: { dir: 'dist', format: 'es', entryFileNames: entryFmt('esm', false) },
+		plugins,
+	},
+
+	// —— Per-plugin minified build ——
+	{
+		input: pluginInputs,
+		output: { dir: 'dist', format: 'es', entryFileNames: entryFmt('min', true) },
+		plugins: [...plugins, terser()],
+	},
+
+	// —— Declarations bundle (multi-entry) ——
+	{
+		input: allEntries,
+		external: [/\.scss$/],
+		output: {
+			dir: 'dist',
+			format: 'es',
+			preserveModules: true,
+			preserveModulesRoot: 'src',
+			entryFileNames: chunk => {
+				if (chunk.name === 'index') return 'index.d.ts';
+				const pluginName = path.basename(path.dirname(chunk.facadeModuleId));
+				return `plugins/${pluginName}/index.d.ts`;
+			},
 		},
-		{
-				input: pluginEntries,
-				output: {
-						...baseOutput,
-						dir: 'dist',
-						format: 'es',
-						entryFileNames: (chunkInfo) => {
-							return chunkInfo.facadeModuleId.includes('/src/plugins/')
-								? 'index.min.js'
-								: '[name].min.js';
-						},
-						plugins: [terser()],
-				},
-				plugins,
-		},
+		plugins: [dts()],
+	},
 ];

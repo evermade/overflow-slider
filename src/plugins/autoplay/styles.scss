@@ -1,0 +1,11 @@
+/* --------------------------------------------------------------
+# AutoplayPlugin
+-------------------------------------------------------------- */
+
+:root {
+	--overflow-slider-autoplay-background: #000;
+}
+
+.overflow-slider__autoplay {
+	background: var(--overflow-slider-autoplay-background);
+}

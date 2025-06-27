@@ -1,0 +1,14 @@
+/**
+ * Overflow Slider mixins
+ */
+
+@mixin os-slide-width($slidesPerView: 3, $gap: var(--slide-gap, 1rem), $containerWidth: var(--slider-container-width, 90vw)) {
+	width: calc( ( #{$containerWidth} / #{$slidesPerView} ) - calc( #{$slidesPerView} - 1 ) / #{$slidesPerView} * #{$gap});
+}
+
+@mixin os-break-out-full-width {
+	position: relative;
+	left: 50%;
+	width: 100vw;
+	margin-left: -50vw;
+}

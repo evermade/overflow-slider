@@ -14,10 +14,14 @@ export type Slider<O = {}, C = {}, H extends string = string> = {
 	moveToSlide: (
 		index: number
 	) => void
+	canMoveToSlide: (
+	index: number
+	 ) => boolean
 	getInclusiveScrollWidth: () => number
 	getInclusiveClientWidth: () => number
 	getScrollLeft: () => number
 	setScrollLeft: (value: number) => void
+	setActiveSlideIdx: () => void
 	on: (
 		name: H | SliderHooks,
 		cb: SliderCallback
@@ -31,20 +35,44 @@ export type SliderCallback<O = {}, C = {}, H extends string = string> = (
 	props: Slider<O, C, H>
 ) => void;
 
+/**
+ * Recursively makes all properties of T optional.
+ * @see https://www.typescriptlang.org/docs/handbook/utility-types.html#mapped-types
+ */
+export type DeepPartial<T> = {
+	[P in keyof T]?: T[P] extends object
+		? DeepPartial<T[P]>
+		: T[P]
+};
+
 export type SliderOptions = {
 	scrollBehavior: string;
 	scrollStrategy: string;
 	slidesSelector: string;
 	emulateScrollSnap: boolean;
-	emulateScrollSnapMaxThreshold: number;
+	emulateScrollSnapMaxThreshold?: number;
+	cssVariableContainer: HTMLElement;
 	rtl: boolean;
+	targetWidth?: ( slider: Slider ) => number,
 	[key: string]: unknown;
+}
+
+export type SliderOptionArgs = {
+ scrollBehavior?: 'smooth' | 'auto';
+ scrollStrategy?: 'fullSlide' | 'partialSlide';
+ slidesSelector?: string;
+ emulateScrollSnap?: boolean;
+ emulateScrollSnapMaxThreshold?: number;
+ cssVariableContainer?: HTMLElement;
+ rtl?: boolean;
+ [key: string]: unknown;
 }
 
 export type SliderDetails = {
 	hasOverflow: boolean;
 	slideCount: number;
 	containerWidth: number;
+	containerHeight: number;
 	scrollableAreaWidth: number;
 	amountOfPages: number;
 	currentPage: number;
