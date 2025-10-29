@@ -74,6 +74,16 @@ function getOutermostChildrenEdgeMarginSum(el) {
 function Slider(container, options, plugins) {
     let slider;
     let subs = {};
+    const overrideTransitions = () => {
+        slider.slides.forEach((slide) => {
+            slide.style.transition = 'none';
+        });
+    };
+    const restoreTransitions = () => {
+        slider.slides.forEach((slide) => {
+            slide.style.removeProperty('transition');
+        });
+    };
     function init() {
         slider.container = container;
         // ensure container has id
@@ -83,6 +93,8 @@ function Slider(container, options, plugins) {
             container.setAttribute('id', containerId);
         }
         setSlides();
+        // CSS transitions can cause delays for calculations
+        overrideTransitions();
         setDetails(true);
         setActiveSlideIdx();
         slider.on('contentsChanged', () => {
@@ -109,12 +121,20 @@ function Slider(container, options, plugins) {
             for (const plugin of plugins) {
                 plugin(slider);
             }
+            // plugins may mutate layout: refresh details and derived data after they run
+            // setTimeout( () => {
+            setDetails();
+            setActiveSlideIdx();
+            setCSSVariables();
+            slider.emit('pluginsLoaded');
+            // }, 250 );
         }
         slider.on('detailsChanged', () => {
             setDataAttributes();
             setCSSVariables();
         });
         slider.emit('created');
+        restoreTransitions();
         slider.container.setAttribute('data-ready', 'true');
     }
     function setDetails(isInit = false) {
@@ -515,14 +535,30 @@ function Slider(container, options, plugins) {
         // Get container rect once (includes any CSS transforms)
         const containerRect = container.getBoundingClientRect();
         const factor = rtl ? -1 : 1;
+        // Calculate target area offset if targetWidth is defined
+        let targetAreaOffset = 0;
+        if (typeof options.targetWidth === 'function') {
+            try {
+                const targetWidth = options.targetWidth(slider);
+                const containerWidth = containerRect.width;
+                if (Number.isFinite(targetWidth) && targetWidth > 0 && targetWidth < containerWidth) {
+                    targetAreaOffset = (containerWidth - targetWidth) / 2;
+                }
+            }
+            catch (error) {
+                // ignore errors, use default offset of 0
+            }
+        }
         // Build slide metadata
         const slideData = [...slides].map(slide => {
             const { width } = slide.getBoundingClientRect();
             const slideRect = slide.getBoundingClientRect();
-            // position relative to container’s left edge
+            // position relative to container's left edge
             const relativeStart = (slideRect.left - containerRect.left) + scrollPos;
-            const triggerPoint = Math.min(relativeStart + width / 2, relativeStart + emulateScrollSnapMaxThreshold);
-            return { start: relativeStart, trigger: triggerPoint };
+            // Adjust trigger point to align with target area start instead of container edge
+            const alignmentPoint = relativeStart - targetAreaOffset;
+            const triggerPoint = Math.min(alignmentPoint + width / 2, alignmentPoint + emulateScrollSnapMaxThreshold);
+            return { start: relativeStart - targetAreaOffset, trigger: triggerPoint };
         });
         // Pick the target start based on drag direction
         let targetStart = null;

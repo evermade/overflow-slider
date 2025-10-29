@@ -20,7 +20,8 @@ import DotsPlugin from '../dist/plugins/dots/index.esm.js';
 import FullWidthPlugin from '../dist/plugins/full-width/index.esm.js';
 import ThumbnailsPlugin from '../dist/plugins/thumbnails/index.esm.js';
 import FadePlugin from '../dist/plugins/fade/index.esm.js';
-// import InfiniteScrollPlugin from '../dist/plugins/infinite-scroll/index.esm.js';
+import ClassNamesPlugin from '../dist/plugins/classnames/index.esm.js';
+
 
 (function () {
 	const init = () => {
@@ -135,6 +136,43 @@ import FadePlugin from '../dist/plugins/fade/index.esm.js';
 		);
 		console.log( '1-fade', example1Fade );
 
+		const example1ClassNames = new OverflowSlider(
+			document.querySelector( '.example-container-1-classname-opacity' ),
+			{
+				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
+			},
+			[
+				DragScrollingPlugin(),
+				ClassNamesPlugin(),
+			]
+		);
+		console.log( '1-classname-opacity', example1ClassNames );
+
+		const example1ClassNamesPartly = new OverflowSlider(
+			document.querySelector( '.example-container-1-classname-partly' ),
+			{
+				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
+				targetWidth: (slider) => {
+					return slider.container.parentElement.clientWidth;
+				}
+			},
+			[
+				DragScrollingPlugin(),
+				FullWidthPlugin(),
+				ClassNamesPlugin(
+					{
+						classnames: {
+							partlyVisible: 'is-partly-visible',
+						},
+						freezeStateOnVisible: true,
+					}
+				),
+			]
+		);
+		console.log( '1-classname-partly', example1ClassNamesPartly );
+
 		const example1AutoplaySlide = new OverflowSlider(
 			document.querySelector( '.example-container-1-autoplay-slide' ),
 			{
@@ -162,25 +200,6 @@ import FadePlugin from '../dist/plugins/fade/index.esm.js';
 			]
 		);
 		console.log( '1-autoplay-view', example1AutoplayView );
-
-		// const example1Infinite = new OverflowSlider(
-		// 	document.querySelector( '.example-container-1-infinite' ),
-		// 	{
-		// 		emulateScrollSnap: true,
-		// 		rtl: document.documentElement.dir === 'rtl',
-		// 	},
-		// 	[
-		// 		DragScrollingPlugin(),
-		// 		AutoplayPlugin({
-		// 			movementType: 'slide',
-		// 			delayInMs: 1000,
-		// 			// loop: false, // infinite should loop it
-		// 		}),
-		// 		ScrollIndicatorPlugin(),
-		// 		InfiniteScrollPlugin(),
-		// 	]
-		// );
-		// console.log( '1-infinite', example1Infinite );
 
 		const example2PerfectFit = new OverflowSlider(
 			document.querySelector( '.example-container-2-perfect-fit' ),
@@ -288,17 +307,14 @@ import FadePlugin from '../dist/plugins/fade/index.esm.js';
 			document.querySelector( '.example-container-4-full-width' ),
 			{
 				rtl: document.documentElement.dir === 'rtl',
+				emulateScrollSnap: true,
+				targetWidth: (slider) => {
+					return slider.container.parentElement.clientWidth;
+				}
 			},
 			[
 				DragScrollingPlugin(),
-				FullWidthPlugin(
-					{
-						targetWidth: (slider) => {
-							// copy the width of the parent element
-							return slider.container.parentElement.clientWidth;
-						}
-					}
-				),
+				FullWidthPlugin(),
 				ScrollIndicatorPlugin(),
 			]
 		);

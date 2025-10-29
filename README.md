@@ -327,6 +327,42 @@ const slider = new OverflowSlider(
 );
 ```
 
+### ClassNamesPlugin
+
+Adds CSS classes to each slide based on its visibility inside the slider's target width (or the container width when no target width is supplied). Useful for animating only the slides that are currently in view.
+
+```ts
+import ClassNamesPlugin from '@evermade/overflow-slider/plugins/classnames';
+
+const slider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+	{},
+	[
+		ClassNamesPlugin({
+			freezeStateOnVisible: true,
+			classNames: {
+				visible: 'is-visible',
+				partlyVisible: 'is-partly-visible',
+				hidden: 'is-hidden',
+			},
+		}),
+	]
+);
+```
+
+All options are optional.
+
+```ts
+type ClassnameOptions = {
+	classNames: {
+		visible: string;
+		partlyVisible: string;
+		hidden: string;
+	};
+	freezeStateOnVisible: boolean; // keep slides in "visible" state once they have been fully seen
+};
+```
+
 All options are optional.
 
 ```ts
@@ -521,14 +557,17 @@ The library is designed to work with horizontal scrolling. Vertical scrolling is
 
 ### Infinite scroll
 
-Infinite scroll is not supported and likely never will be. It is a feature that is not very common and it is not very accessible.
-
-## To-do
-
-* Maybe add plugin that adds class for visible slides
-* Experiment on infinite scroll
+Infinite scroll is not supported and likely never will be. It is not accessible and causes really complex problems as with overflow we are bound to more "physics" than transform based sliders and there's no escape of the physics (like visible slides need to represent DOM order).
 
 ## Changelog
+
+### 4.1.0
+
+* Add: ClassNamesPlugin to add classes to visible/partly visible/hidden slides.
+* Add: targetWidth property to core level (backwards compatible with FullWidthPlugin implementation)
+* Fix: Scroll snapping for FullWidthPlugin
+* Fix: Possible issues where plugin changed some details and that was not applied for first render
+* Fix: Rendering issue where transition on slides could prevent calculations initially from working
 
 ### 4.0.0
 

@@ -1,7 +1,7 @@
-import { DeepPartial, Slider } from '../core/index.d2.ts';
+import { DeepPartial, Slider } from '../core/index.js';
 
 type FullWidthOptions = {
-    targetWidth: (slider: Slider) => number;
+    targetWidth?: (slider: Slider) => number;
     addMarginBefore: boolean;
     addMarginAfter: boolean;
 };

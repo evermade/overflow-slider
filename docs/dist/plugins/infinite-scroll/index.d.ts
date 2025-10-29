@@ -1,4 +1,4 @@
-import { SliderPlugin } from '../core/index.d2.ts';
+import { SliderPlugin } from '../core/index.js';
 
 /**
  * Infinite‐scroll plugin

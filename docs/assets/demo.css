@@ -625,6 +625,46 @@ h3:before {
 	height: 1.625rem !important;
 }
 
+.example-container-1-classname-opacity .example-item {
+	transition: .5s ease-in-out;
+}
+
+.example-container-1-classname-opacity .is-visible {
+	opacity: 1;
+}
+.example-container-1-classname-opacity .is-hidden {
+	opacity: 0;
+}
+
+.example-container-1-classname-partly {
+	width: 100vw;
+	margin-inline-start: calc(-50vw + 50%);
+	scroll-snap-type: x mandatory;
+}
+
+@media (min-width: 768px) {
+	.example-container-1-classname-partly .example-item {
+		width: calc( ( var( --slider-container-target-width ) / 4 ) - ( 3 / 4 * var( --slide-gap ) ) );
+	}
+
+.example-container-1-classname-partly .example-item {
+	transition: .2s ease-in-out;
+}
+
+.example-container-1-classname-partly .is-visible {
+	opacity: 1;
+	/* transform: scale(1); */
+}
+
+.example-container-1-classname-partly .is-partly-visible {
+	opacity: .5;
+	/* transform: scale(0.85); */
+}
+.example-container-1-classname-partly .is-hidden {
+	opacity: .2;
+	/* transform: scale(0); */
+}
+
 /* ===========================================================================
   Example 4: Filters
 =========================================================================== */
@@ -722,6 +762,7 @@ h3:before {
 .example-container-4-full-width {
 	width: 100vw;
 	margin-inline-start: calc(-50vw + 50%);
+	scroll-snap-type: x mandatory;
 }
 
 /* ===========================================================================

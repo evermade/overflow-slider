@@ -65,6 +65,7 @@ export type SliderOptionArgs = {
  emulateScrollSnapMaxThreshold?: number;
  cssVariableContainer?: HTMLElement;
  rtl?: boolean;
+ targetWidth?: ( slider: Slider ) => number;
  [key: string]: unknown;
 }
 
