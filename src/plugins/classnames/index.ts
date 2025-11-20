@@ -70,8 +70,6 @@ export default function ClassNamesPlugin( args?: DeepPartial<ClassnameOptions> )
 		const update = () => {
 			const { targetStart, targetEnd } = getTargetBounds();
 
-			console.log( 'targetStart:', targetStart, 'targetEnd:', targetEnd );
-
 			slider.slides.forEach( ( slide ) => {
 				const slideRect = slide.getBoundingClientRect();
 				const slideLeft = slideRect.left;

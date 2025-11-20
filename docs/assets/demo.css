@@ -817,6 +817,7 @@ h3:before {
 .example-container-4-hero {
 	--slider-gap: 0;
 	gap: 0;
+	scroll-snap-type: x mandatory;
 }
 
 .example-container-4-hero > * {

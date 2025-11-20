@@ -300,6 +300,7 @@ All options are optional.
 
 ```ts
 type DotsOptions = {
+	type: 'view' | 'slide';
 	texts: {
 		dotDescription: string;
 	},
@@ -560,6 +561,11 @@ The library is designed to work with horizontal scrolling. Vertical scrolling is
 Infinite scroll is not supported and likely never will be. It is not accessible and causes really complex problems as with overflow we are bound to more "physics" than transform based sliders and there's no escape of the physics (like visible slides need to represent DOM order).
 
 ## Changelog
+
+### 4.2.0
+
+* Add: View mode in DotsPlugin in addition to previous "slide mode"
+* Fix: Remove forgotten console.log from ClassNamesPlugin
 
 ### 4.1.0
 

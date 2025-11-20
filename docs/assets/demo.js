@@ -121,6 +121,24 @@ import ClassNamesPlugin from '../dist/plugins/classnames/index.esm.js';
 		);
 		console.log( '1-dots', example1Dots );
 
+		const example1DotsView = new OverflowSlider(
+			document.querySelector( '.example-container-1-dots-view' ),
+			{
+				emulateScrollSnap: true,
+				rtl: document.documentElement.dir === 'rtl',
+			},
+			[
+				DragScrollingPlugin(),
+				SkipLinksPlugin(),
+				DotsPlugin(
+					{
+						type: 'view',
+					}
+				),
+			]
+		);
+		console.log( '1-dots-view', example1DotsView );
+
 		const example1Fade = new OverflowSlider(
 			document.querySelector( '.example-container-1-fade' ),
 			{

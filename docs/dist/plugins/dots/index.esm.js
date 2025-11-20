@@ -7,11 +7,12 @@ const DEFAULT_CLASS_NAMES = {
 };
 function DotsPlugin(args) {
     return (slider) => {
-        var _a, _b;
+        var _a, _b, _c;
         const options = {
+            type: (_a = args === null || args === void 0 ? void 0 : args.type) !== null && _a !== void 0 ? _a : 'slide',
             texts: Object.assign(Object.assign({}, DEFAULT_TEXTS), (args === null || args === void 0 ? void 0 : args.texts) || []),
             classNames: Object.assign(Object.assign({}, DEFAULT_CLASS_NAMES), (args === null || args === void 0 ? void 0 : args.classNames) || []),
-            container: (_a = args === null || args === void 0 ? void 0 : args.container) !== null && _a !== void 0 ? _a : null,
+            container: (_b = args === null || args === void 0 ? void 0 : args.container) !== null && _b !== void 0 ? _b : null,
         };
         const dots = document.createElement('div');
         dots.classList.add(options.classNames.dotsContainer);
@@ -20,18 +21,18 @@ function DotsPlugin(args) {
             dots.setAttribute('data-has-content', slider.details.hasOverflow.toString());
             dots.innerHTML = '';
             const dotsList = document.createElement('ul');
-            const pages = slider.details.slideCount;
-            const currentItem = slider.activeSlideIdx;
-            if (pages <= 1) {
+            const count = options.type === 'view' ? slider.details.amountOfPages : slider.details.slideCount;
+            const currentIndex = options.type === 'view' ? slider.details.currentPage : slider.activeSlideIdx;
+            if (count <= 1) {
                 return;
             }
-            for (let i = 0; i < pages; i++) {
+            for (let i = 0; i < count; i++) {
                 const dotListItem = document.createElement('li');
                 const dot = document.createElement('button');
                 dot.setAttribute('type', 'button');
                 dot.setAttribute('class', options.classNames.dotsItem);
-                dot.setAttribute('aria-label', options.texts.dotDescription.replace('%d', (i + 1).toString()).replace('%d', pages.toString()));
-                dot.setAttribute('aria-pressed', (i === currentItem).toString());
+                dot.setAttribute('aria-label', options.texts.dotDescription.replace('%d', (i + 1).toString()).replace('%d', count.toString()));
+                dot.setAttribute('aria-pressed', (i === currentIndex).toString());
                 dot.setAttribute('data-item', (i + 1).toString());
                 dotListItem.appendChild(dot);
                 dotsList.appendChild(dotListItem);
@@ -45,23 +46,23 @@ function DotsPlugin(args) {
                     }
                     const currentItem = parseInt((_a = currentItemItem.getAttribute('data-item')) !== null && _a !== void 0 ? _a : '1');
                     if (e.key === 'ArrowLeft') {
-                        const previousPage = currentItem - 1;
-                        if (previousPage > 0) {
-                            const matchingDot = dots.querySelector(`[data-item="${previousPage}"]`);
+                        const previousIndex = currentItem - 1;
+                        if (previousIndex > 0) {
+                            const matchingDot = dots.querySelector(`[data-item="${previousIndex}"]`);
                             if (matchingDot) {
                                 matchingDot.focus();
                             }
-                            activateDot(previousPage);
+                            activateDot(previousIndex);
                         }
                     }
                     if (e.key === 'ArrowRight') {
-                        const nextPage = currentItem + 1;
-                        if (nextPage <= pages) {
-                            const matchingDot = dots.querySelector(`[data-item="${nextPage}"]`);
+                        const nextIndex = currentItem + 1;
+                        if (nextIndex <= count) {
+                            const matchingDot = dots.querySelector(`[data-item="${nextIndex}"]`);
                             if (matchingDot) {
                                 matchingDot.focus();
                             }
-                            activateDot(nextPage);
+                            activateDot(nextIndex);
                         }
                     }
                 });
@@ -75,19 +76,30 @@ function DotsPlugin(args) {
                 }
             }
         };
-        const activateDot = (item) => {
-            slider.moveToSlide(item - 1);
+        const activateDot = (index) => {
+            if (options.type === 'view') {
+                const targetPosition = slider.details.containerWidth * (index - 1);
+                const scrollLeft = slider.options.rtl ? -targetPosition : targetPosition;
+                slider.container.scrollTo({
+                    left: scrollLeft,
+                    behavior: slider.options.scrollBehavior
+                });
+            }
+            else {
+                slider.moveToSlide(index - 1);
+            }
         };
         buildDots();
         if (options.container) {
             options.container.appendChild(dots);
         }
         else {
-            (_b = slider.container.parentNode) === null || _b === void 0 ? void 0 : _b.insertBefore(dots, slider.container.nextSibling);
+            (_c = slider.container.parentNode) === null || _c === void 0 ? void 0 : _c.insertBefore(dots, slider.container.nextSibling);
         }
         slider.on('scrollEnd', buildDots);
         slider.on('contentsChanged', buildDots);
         slider.on('containerSizeChanged', buildDots);
+        slider.on('detailsChanged', buildDots);
     };
 }
 

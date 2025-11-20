@@ -1,6 +1,7 @@
 import { DeepPartial, Slider } from '../core/index.js';
 
 type DotsOptions = {
+    type: 'view' | 'slide';
     texts: {
         dotDescription: string;
     };
