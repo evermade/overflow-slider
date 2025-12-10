@@ -45,6 +45,8 @@ export default function DotsPlugin( args?: DeepPartial<DotsOptions> ) {
 			dots.setAttribute( 'data-has-content', slider.details.hasOverflow.toString() );
 			dots.innerHTML = '';
 
+			console.log('buildDots');
+
 			const dotsList = document.createElement( 'ul' );
 
 			const count = options.type === 'view' ? slider.details.amountOfPages : slider.details.slideCount;
@@ -105,10 +107,19 @@ export default function DotsPlugin( args?: DeepPartial<DotsOptions> ) {
 				}
 			}
 		};
-
 		const activateDot = ( index: number ) => {
+			console.log('activateDot', index, 'slider.details', slider.details);
+			
 			if ( options.type === 'view' ) {
-				const targetPosition = slider.details.containerWidth * ( index - 1 );
+				const count = slider.details.amountOfPages;
+				let targetPosition = slider.details.containerWidth * ( index - 1 );
+
+				// For the last page, scroll to the maximum scroll position to ensure it activates
+				if ( index === count ) {
+					const maxScroll = slider.details.scrollableAreaWidth - slider.details.containerWidth;
+					targetPosition = maxScroll;
+				}
+
 				const scrollLeft = slider.options.rtl ? -targetPosition : targetPosition;
 				slider.container.scrollTo({
 					left: scrollLeft,

@@ -562,6 +562,10 @@ Infinite scroll is not supported and likely never will be. It is not accessible 
 
 ## Changelog
 
+### 4.2.1
+
+* Fix: currentPage and amountOfPages not being calculated correctly with FullWidthPlugin causin last page no to activate properly.
+
 ### 4.2.0
 
 * Add: View mode in DotsPlugin in addition to previous "slide mode"

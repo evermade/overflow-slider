@@ -7,7 +7,7 @@ function details(slider) {
     let containerHeight = 0;
     let scrollableAreaWidth = 0;
     let amountOfPages = 0;
-    let currentPage = 1;
+    let currentPage = 0;
     if (Math.floor(slider.getInclusiveScrollWidth()) > Math.floor(slider.getInclusiveClientWidth())) {
         hasOverflow = true;
     }
@@ -18,8 +18,11 @@ function details(slider) {
     amountOfPages = Math.ceil(scrollableAreaWidth / containerWidth);
     if (Math.floor(slider.getScrollLeft()) >= 0) {
         currentPage = Math.floor(slider.getScrollLeft() / containerWidth);
-        // consider as last page if the scrollLeft + containerWidth is equal to scrollWidth
-        if (Math.floor(slider.getScrollLeft() + containerWidth) === Math.floor(scrollableAreaWidth)) {
+        // Consider as last page if we're within tolerance of the maximum scroll position
+        // When FullWidthPlugin is active, account for the margin offset
+        const maxScroll = scrollableAreaWidth - containerWidth - (2 * slider.getLeftOffset());
+        const currentScroll = slider.getScrollLeft();
+        if (currentScroll >= maxScroll - 1) {
             currentPage = amountOfPages - 1;
         }
     }
@@ -604,6 +607,8 @@ function Slider(container, options, plugins) {
         snapToClosestSlide,
         getInclusiveScrollWidth,
         getInclusiveClientWidth,
+        getLeftOffset,
+        getGapSize,
         getScrollLeft,
         setScrollLeft,
         setActiveSlideIdx,

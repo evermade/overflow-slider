@@ -19,6 +19,8 @@ export type Slider<O = {}, C = {}, H extends string = string> = {
 	 ) => boolean
 	getInclusiveScrollWidth: () => number
 	getInclusiveClientWidth: () => number
+	getGapSize: () => number
+	getLeftOffset: () => number
 	getScrollLeft: () => number
 	setScrollLeft: (value: number) => void
 	setActiveSlideIdx: () => void

@@ -1,4 +1,4 @@
-import { DeepPartial, Slider } from '../core/index.d2.ts';
+import { DeepPartial, Slider } from '../core/index.js';
 
 type ArrowsMovementTypes = 'view' | 'slide';
 type ArrowsOptions = {

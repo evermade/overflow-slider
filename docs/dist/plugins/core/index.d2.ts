@@ -11,6 +11,8 @@ declare function OverflowSlider(container: HTMLElement, options?: SliderOptionAr
     canMoveToSlide: (index: number) => boolean;
     getInclusiveScrollWidth: () => number;
     getInclusiveClientWidth: () => number;
+    getGapSize: () => number;
+    getLeftOffset: () => number;
     getScrollLeft: () => number;
     setScrollLeft: (value: number) => void;
     setActiveSlideIdx: () => void;

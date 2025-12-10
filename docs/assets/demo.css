@@ -665,6 +665,12 @@ h3:before {
 	/* transform: scale(0); */
 }
 
+.example-container-1-dots-view-full {
+	width: 100vw;
+	margin-inline-start: calc(-50vw + 50%);
+	scroll-snap-type: x mandatory;
+}
+
 /* ===========================================================================
   Example 4: Filters
 =========================================================================== */

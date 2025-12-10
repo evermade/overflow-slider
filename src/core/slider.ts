@@ -593,6 +593,8 @@ export default function Slider( container: HTMLElement, options : SliderOptionAr
 		snapToClosestSlide,
 		getInclusiveScrollWidth,
 		getInclusiveClientWidth,
+		getLeftOffset,
+		getGapSize,
 		getScrollLeft,
 		setScrollLeft,
 		setActiveSlideIdx,

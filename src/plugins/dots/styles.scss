@@ -49,7 +49,6 @@
 		position: absolute;
 	}
 	&[aria-pressed="true"],
-	&:focus,
 	&:hover {
 		background: var(--overflow-slider-dot-active-color);
 	}
