@@ -22,6 +22,7 @@
 	overflow: auto;
 	width: 100%;
 	display: grid;
+	justify-content: flex-start;
 	grid-auto-flow: column;
 	grid-template-columns: max-content;
 	max-width: max-content;

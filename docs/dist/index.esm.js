@@ -21,8 +21,7 @@ function details(slider) {
         // Consider as last page if we're within tolerance of the maximum scroll position
         // When FullWidthPlugin is active, account for the margin offset
         const maxScroll = scrollableAreaWidth - containerWidth - (2 * slider.getLeftOffset());
-        const currentScroll = slider.getScrollLeft();
-        if (currentScroll >= maxScroll - 1) {
+        if (slider.getScrollLeft() >= maxScroll - 1) {
             currentPage = amountOfPages - 1;
         }
     }

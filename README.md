@@ -562,6 +562,10 @@ Infinite scroll is not supported and likely never will be. It is not accessible 
 
 ## Changelog
 
+### 4.2.2
+
+* Add: `justify-content: flex-start` to overflow-slider base styles to prevent centering of slides or other unexpected behavior when slider container is wider than its content.
+
 ### 4.2.1
 
 * Fix: currentPage and amountOfPages not being calculated correctly with FullWidthPlugin causin last page no to activate properly.
