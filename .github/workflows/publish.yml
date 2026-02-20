@@ -1,6 +1,10 @@
 # Publish to npm using Trusted Publishers (OIDC)
 name: Publish to NPM
 
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 on:
   release:
     types: [created]
@@ -15,37 +19,14 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run tests
-        run: npm test
-
-      - name: Debug authentication
-        run: |
-          echo "=== Environment Check ==="
-          echo "ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${ACTIONS_ID_TOKEN_REQUEST_TOKEN:+SET}"
-          echo "ACTIONS_ID_TOKEN_REQUEST_URL: ${ACTIONS_ID_TOKEN_REQUEST_URL:+SET}"
-          echo "NPM_CONFIG_REGISTRY: $NPM_CONFIG_REGISTRY"
-          echo "=== npm whoami ==="
-          npm whoami || echo "Failed to authenticate"
-          echo "=== npm ping ==="
-          npm ping
-          echo "=== Check registry ==="
-          npm config get registry
-
-      - name: Publish to npm
-        run: npm publish --access public ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+          
+      - run: npm ci
+      - run: npm test  
+      - run: npm publish ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
