@@ -846,3 +846,8 @@ h3:before {
 	--overflow-slider-dot-inactive-color: rgba(0, 0, 0, 0.2);
 	--overflow-slider-dot-active-color: rgba(0, 0, 0, .8);
 }
+
+.example-container-1-focus .example-item {
+	aspect-ratio: unset;
+	height: 200px;
+}

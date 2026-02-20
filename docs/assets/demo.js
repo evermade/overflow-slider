@@ -241,6 +241,17 @@ import ClassNamesPlugin from '../dist/plugins/classnames/index.esm.js';
 		);
 		console.log( '1-autoplay-view', example1AutoplayView );
 
+		const example1Focus = new OverflowSlider(
+			document.querySelector( '.example-container-1-focus' ),
+			{
+				rtl: document.documentElement.dir === 'rtl',
+			},
+			[
+				DragScrollingPlugin(),
+			]
+		);
+		console.log( '1-focus', example1Focus );
+
 		const example2PerfectFit = new OverflowSlider(
 			document.querySelector( '.example-container-2-perfect-fit' ),
 			{

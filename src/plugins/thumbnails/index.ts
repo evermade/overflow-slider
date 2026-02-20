@@ -4,7 +4,7 @@ export type ThumbnailsOptions = {
 	mainSlider: Slider,
 };
 
-export default function FullWidthPlugin( args: DeepPartial<ThumbnailsOptions> ) {
+export default function ThumbnailPlugin( args: DeepPartial<ThumbnailsOptions> ) {
 	return ( slider: Slider ) => {
 
 		const options = <ThumbnailsOptions>{
@@ -43,14 +43,14 @@ export default function FullWidthPlugin( args: DeepPartial<ThumbnailsOptions> ) 
 			setTimeout(() => {
 				const mainActiveSlideIdx = mainSlider.activeSlideIdx;
 				const thumbActiveSlideIdx = slider.activeSlideIdx;
+				const activeThumbnail = slider.slides[mainActiveSlideIdx] as HTMLElement;
+				setActiveThumbnail(activeThumbnail);
 				if ( thumbActiveSlideIdx === mainActiveSlideIdx ) {
 					return;
 				}
-				const activeThumbnail = slider.slides[mainActiveSlideIdx] as HTMLElement;
-				setActiveThumbnail(activeThumbnail);
 				slider.moveToSlide(mainActiveSlideIdx);
 			}, 50);
 		});
-
 	};
 }
+

@@ -202,20 +202,42 @@ export default function Slider( container: HTMLElement, options : SliderOptionAr
 			wasInteractedWith = true;
 		}, { passive: true });
 		slider.container.addEventListener('focusin', (e) => {
-			// move target parents as long as they are not the container
-			// but only if focus didn't start from mouse or touch
-			if (!wasInteractedWith) {
-				let target = e.target as HTMLElement;
-				while (target.parentElement !== slider.container) {
-					if (target.parentElement) {
-						target = target.parentElement;
-					} else {
-						break;
-					}
-				}
-				ensureSlideIsInView(target, 'auto');
+			// Only handle keyboard-initiated focus (not mouse or touch)
+			if (wasInteractedWith) {
+				wasInteractedWith = false;
+				return;
 			}
 			wasInteractedWith = false;
+
+			// No scrolling needed if there is no overflow
+			if ( !slider.details.hasOverflow ) {
+				return;
+			}
+
+			const focusedElement = e.target as HTMLElement;
+
+			// Walk up from the focused element to find the direct child (slide) of the container
+			let slide = focusedElement;
+			while (slide.parentElement !== slider.container) {
+				if (slide.parentElement) {
+					slide = slide.parentElement;
+				} else {
+					// Focused element is not inside the slider container
+					return;
+				}
+			}
+
+			// Emit programmaticScrollStart immediately so the browser's native focus
+			// scroll events are classified as programmatic (not native). This prevents
+			// nativeScrollStart from restoring scrollSnapType and fighting our correction.
+			slider.emit('programmaticScrollStart');
+
+			// Use setTimeout to let the browser's native focus scroll complete,
+			// then override with our WCAG-compliant scroll positioning
+			setTimeout(() => {
+				scrollFocusedSlideIntoView(slide, focusedElement);
+				slider.emit('focusScroll');
+			}, 50);
 		});
 
 
@@ -263,6 +285,83 @@ export default function Slider( container: HTMLElement, options : SliderOptionAr
 				slider.container.scrollTo({ left: scrollTarget, behavior: behavior });
 			}, 50, scrollTarget);
 		}
+	};
+
+	/**
+	 * Scrolls a focused slide (or child element) into view for WCAG AA compliance.
+	 * Priority:
+	 *   1. Show the full slide if it fits in the container
+	 *   2. If the slide is wider than the container, show the focused element
+	 *   3. If neither fits, align the leading edge (left for LTR, right for RTL)
+	 */
+	function scrollFocusedSlideIntoView( slide: HTMLElement, focusedElement: HTMLElement ) {
+		const isRtl = slider.options.rtl;
+		const containerRect = slider.container.getBoundingClientRect();
+		const containerWidth = slider.container.offsetWidth;
+		const slideRect = slide.getBoundingClientRect();
+		const scrollLeft = slider.container.scrollLeft;
+
+		// Calculate visual offsets relative to the container viewport
+		const slideLeftOffset = slideRect.left - containerRect.left;
+		const slideRightOffset = slideRect.right - containerRect.right;
+
+		// Check if slide is already fully visible (1px tolerance for sub-pixel rounding)
+		if ( slideLeftOffset >= -1 && slideRightOffset <= 1 ) {
+			slider.container.style.scrollSnapType = '';
+			slider.emit('programmaticScrollEnd');
+			return;
+		}
+
+		let scrollTarget: number;
+
+		if ( slideRect.width <= containerWidth ) {
+			// Slide fits in container — align its leading edge to show it fully
+			if ( isRtl ) {
+				// RTL: align slide's right edge with container's right edge
+				scrollTarget = scrollLeft + slideRightOffset;
+			} else {
+				// LTR: align slide's left edge with container's left edge
+				scrollTarget = scrollLeft + slideLeftOffset;
+			}
+		} else if ( focusedElement !== slide ) {
+			// Slide is wider than container — try to show the focused child element
+			const focusRect = focusedElement.getBoundingClientRect();
+			const focusLeftOffset = focusRect.left - containerRect.left;
+			const focusRightOffset = focusRect.right - containerRect.right;
+
+			// Check if focused element is already fully visible
+			if ( focusLeftOffset >= -1 && focusRightOffset <= 1 ) {
+				slider.container.style.scrollSnapType = '';
+				slider.emit('programmaticScrollEnd');
+				return;
+			}
+
+			if ( focusRect.width <= containerWidth ) {
+				// Focused element fits in container — align its leading edge
+				if ( isRtl ) {
+					scrollTarget = scrollLeft + focusRightOffset;
+				} else {
+					scrollTarget = scrollLeft + focusLeftOffset;
+				}
+			} else {
+				// Focused element is also wider than container — align leading edge
+				if ( isRtl ) {
+					scrollTarget = scrollLeft + focusRightOffset;
+				} else {
+					scrollTarget = scrollLeft + focusLeftOffset;
+				}
+			}
+		} else {
+			// Slide is the focused element and wider than container — align leading edge
+			if ( isRtl ) {
+				scrollTarget = scrollLeft + slideRightOffset;
+			} else {
+				scrollTarget = scrollLeft + slideLeftOffset;
+			}
+		}
+
+		slider.emit('programmaticScrollStart');
+		slider.container.scrollTo({ left: scrollTarget!, behavior: 'auto' });
 	};
 
 	function setActiveSlideIdx() {

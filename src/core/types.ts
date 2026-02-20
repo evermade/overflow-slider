@@ -95,7 +95,8 @@ export type SliderHooks =
 	| HOOK_NATIVE_SCROLL_END
 	| HOOK_PROGRAMMATIC_SCROLL_START
 	| HOOK_PROGRAMMATIC_SCROLL
-	| HOOK_PROGRAMMATIC_SCROLL_END;
+	| HOOK_PROGRAMMATIC_SCROLL_END
+	| HOOK_FOCUS_SCROLL;
 
 export type HOOK_CREATED = 'created';
 export type HOOK_DETAILS_CHANGED = 'detailsChanged';
@@ -118,5 +119,7 @@ export type HOOK_PROGRAMMATIC_SCROLL_START = 'programmaticScrollStart';
 export type HOOK_PROGRAMMATIC_SCROLL = 'programmaticScroll';
 export type HOOK_PROGRAMMATIC_SCROLL_END = 'programmaticScrollEnd';
 
+// keyboard focus triggered scroll
+export type HOOK_FOCUS_SCROLL = 'focusScroll';
 
 export type SliderPlugin = (slider: Slider) => void;

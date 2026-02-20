@@ -1,4 +1,4 @@
-function FullWidthPlugin(args) {
+function ThumbnailPlugin(args) {
     return (slider) => {
         const options = {
             mainSlider: args.mainSlider,
@@ -31,15 +31,15 @@ function FullWidthPlugin(args) {
             setTimeout(() => {
                 const mainActiveSlideIdx = mainSlider.activeSlideIdx;
                 const thumbActiveSlideIdx = slider.activeSlideIdx;
+                const activeThumbnail = slider.slides[mainActiveSlideIdx];
+                setActiveThumbnail(activeThumbnail);
                 if (thumbActiveSlideIdx === mainActiveSlideIdx) {
                     return;
                 }
-                const activeThumbnail = slider.slides[mainActiveSlideIdx];
-                setActiveThumbnail(activeThumbnail);
                 slider.moveToSlide(mainActiveSlideIdx);
             }, 50);
         });
     };
 }
 
-export { FullWidthPlugin as default };
+export { ThumbnailPlugin as default };
