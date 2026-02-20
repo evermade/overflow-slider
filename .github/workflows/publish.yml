@@ -36,12 +36,16 @@ jobs:
 
       - name: Debug authentication
         run: |
+          echo "=== Environment Check ==="
+          echo "ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${ACTIONS_ID_TOKEN_REQUEST_TOKEN:+SET}"
+          echo "ACTIONS_ID_TOKEN_REQUEST_URL: ${ACTIONS_ID_TOKEN_REQUEST_URL:+SET}"
+          echo "NPM_CONFIG_REGISTRY: $NPM_CONFIG_REGISTRY"
           echo "=== npm whoami ==="
           npm whoami || echo "Failed to authenticate"
           echo "=== npm ping ==="
           npm ping
           echo "=== Check registry ==="
           npm config get registry
-          
+
       - name: Publish to npm
         run: npm publish --access public ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
