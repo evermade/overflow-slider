@@ -623,8 +623,4 @@ Install tools `npm install` and build `npm run build` or develop with `npm run w
 
 Releasing new version:
 
-* Update version in `package.json`
-* Commit to master
-* Set tag with version number to git
-* Create new release in GitHub
-* NPM package is automatically published from GitHub
+See [RELEASE.md](./RELEASE.md)
