@@ -34,5 +34,14 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Debug authentication
+        run: |
+          echo "=== npm whoami ==="
+          npm whoami || echo "Failed to authenticate"
+          echo "=== npm ping ==="
+          npm ping
+          echo "=== Check registry ==="
+          npm config get registry
+          
       - name: Publish to npm
-        run: npm publish --provenance --access public ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
+        run: npm publish --access public ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
