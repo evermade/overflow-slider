@@ -367,6 +367,9 @@ import ClassNamesPlugin from '../dist/plugins/classnames/index.esm.js';
 				DragScrollingPlugin(),
 				FullWidthPlugin(),
 				ScrollIndicatorPlugin(),
+				ArrowsPlugin({
+					movementType: 'slide',
+				}),
 			]
 		);
 		console.log( '4-full-width', example4FullWidth );

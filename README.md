@@ -238,6 +238,54 @@ Set fixed width for slides: `width: 200px;`. Note you can freely change this wit
 
 Set relative width for slides: `width: 100vw;`. Note that you cannot use percentages because they are relative to the container and not the viewport.
 
+## Hooks
+
+The slider instance exposes an event system so you can react to what the slider is doing, or from within a plugin. Use `slider.on( name, callback )` to listen, and `slider.emit( name )` to trigger your own custom events (for example from a plugin). The callback always receives the `slider` instance as its only argument.
+
+```ts
+const slider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+);
+
+slider.on( 'activeSlideChanged', ( slider ) => {
+	console.log( 'Active slide is now', slider.activeSlideIdx );
+} );
+```
+
+Hooks can also be set directly as options when creating the slider, using the hook name as the key:
+
+```ts
+const slider = new OverflowSlider(
+	document.querySelector( '.slider-container-here' ),
+	{
+		activeSlideChanged: ( slider ) => {
+			console.log( 'Active slide is now', slider.activeSlideIdx );
+		},
+	}
+);
+```
+
+### Available hooks
+
+* `created` - Fired once, after the slider (and its plugins) has finished initializing.
+* `pluginsLoaded` - Fired once, right after all plugins have run during initialization.
+* `detailsChanged` - Fired when calculated details (container width, slide count, amount of pages, etc.) change, for example after a resize.
+* `contentsChanged` - Fired when the slides inside the container change (DOM mutations).
+* `containerSizeChanged` - Fired when the container element is resized.
+* `activeSlideChanged` - Fired when `activeSlideIdx` changes, i.e. a different slide becomes the "active" one.
+* `scroll` / `scrollStart` / `scrollEnd` - Fired for any kind of scrolling (native or programmatic), when it starts, while it's happening, and once it settles.
+* `nativeScroll` / `nativeScrollStart` / `nativeScrollEnd` - Same as above but only for scrolling initiated by the user (touch, wheel, drag).
+* `programmaticScroll` / `programmaticScrollStart` / `programmaticScrollEnd` - Same as above but only for scrolling triggered by the slider itself (e.g. `moveToSlide()`, arrow clicks).
+* `focusScroll` - Fired when the slider scrolls a focused slide/element into view (e.g. keyboard navigation).
+
+Plugins may emit their own hooks too, for example `FullWidthPlugin` emits `fullWidthPluginUpdate` whenever it recalculates its margins.
+
+```ts
+slider.on( 'fullWidthPluginUpdate', ( slider ) => {
+	console.log( 'FullWidthPlugin recalculated margins' );
+} );
+```
+
 ## Plugins
 
 ### DragScrollingPlugin

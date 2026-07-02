@@ -1,5 +1,13 @@
 # Changelog
 
+### 4.2.4
+
+* Fix: in FullWidthPlugin `moveToSlideInDirection()`/`moveToSlide()` not moving exactly one slide, and not reaching the first/last slide
+* Fix: rapid arrow clicks could target the same slide twice, stall short of the first/last slide, or need an extra click
+* Fix: in FullWidthPlugin `activeSlideIdx` resolving to the second-to-last slide instead of the last one at max scroll
+* Fix: in FullWidthPlugin `snapToClosestSlide()` (DragScrollingPlugin's `emulateScrollSnap`) resting slightly off the expected slide
+* Fix: clicking an arrow right after a drag with `emulateScrollSnap` could resolve the wrong slide and need an extra click
+
 ### 4.2.3
 
 * Add: React example in README.md

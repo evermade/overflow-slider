@@ -76,6 +76,11 @@ function getOutermostChildrenEdgeMarginSum(el) {
 function Slider(container, options, plugins) {
     let slider;
     let subs = {};
+    // Tracks the slide index requested via moveToSlide()/moveToSlideInDirection() that hasn't
+    // been reflected in slider.activeSlideIdx yet (scrolling and its detection are async).
+    // Without this, rapid consecutive calls would all read the same stale activeSlideIdx
+    // and target the same slide instead of advancing one slide at a time.
+    let pendingSlideIdx = null;
     const overrideTransitions = () => {
         slider.slides.forEach((slide) => {
             slide.style.transition = 'none';
@@ -116,6 +121,15 @@ function Slider(container, options, plugins) {
             });
         };
         slider.on('scroll', setDetailsDebounce);
+        // Discard any pending moveToSlide()/moveToSlideInDirection() target once the user
+        // manually scrolls (drag, wheel, touch): our optimistic target no longer applies,
+        // so let it resync from the real activeSlideIdx. We deliberately do NOT clear this
+        // based on our own programmatic scroll settling (e.g. 'scrollEnd'), since that fires
+        // on a fixed debounce that can race with the tail end of a slow-easing smooth scroll
+        // animation, causing a click to appear to do nothing until a second click is made.
+        slider.on('nativeScrollStart', () => {
+            pendingSlideIdx = null;
+        });
         addEventListeners();
         setDataAttributes();
         setCSSVariables();
@@ -247,9 +261,14 @@ function Slider(container, options, plugins) {
         let wasInteractedWith = false;
         slider.container.addEventListener('mousedown', () => {
             wasInteractedWith = true;
+            // A manual interaction (e.g. DragScrollingPlugin) is starting: any pending
+            // moveToSlide()/moveToSlideInDirection() target is no longer relevant, even
+            // though such drags emit 'programmaticScrollStart' rather than a native one.
+            pendingSlideIdx = null;
         });
         slider.container.addEventListener('touchstart', () => {
             wasInteractedWith = true;
+            pendingSlideIdx = null;
         }, { passive: true });
         slider.container.addEventListener('focusin', (e) => {
             // Only handle keyboard-initiated focus (not mouse or touch)
@@ -310,18 +329,36 @@ function Slider(container, options, plugins) {
         const scrollLeft = slider.container.scrollLeft;
         const slideStart = slideRect.left - sliderRect.left + scrollLeft;
         const slideEnd = slideStart + slideRect.width;
+        // FullWidthPlugin adds inline margin (only) to the first/last slide, which
+        // reserves space at the start/end of the container. That margin has to be
+        // compensated for here, otherwise the scroll target under/overshoots by
+        // that amount and moving a single slide at a time breaks.
+        const leftOffset = getLeftOffset();
         let scrollTarget = null;
         if (Math.floor(slideStart) < Math.floor(scrollLeft)) {
-            scrollTarget = slideStart;
+            scrollTarget = Math.max(0, slideStart - leftOffset);
         }
         else if (Math.floor(slideEnd) > Math.floor(scrollLeft) + Math.floor(containerWidth)) {
-            scrollTarget = slideEnd - containerWidth;
+            scrollTarget = slideEnd - containerWidth + leftOffset;
         }
         else if (Math.floor(slideStart) === 0) {
             scrollTarget = 0;
         }
         else {
-            scrollTarget = slideStart;
+            scrollTarget = Math.max(0, slideStart - leftOffset);
+        }
+        // Clamp to the real scrollable range, and snap exactly to it when targeting the
+        // last slide. Without this, the leftOffset-compensated target can overshoot past
+        // what the browser actually allows, silently getting clamped to a slightly
+        // different position than our formula assumed - which then throws off the
+        // calculation for the next move (e.g. going back to the second-to-last slide).
+        const maxScrollLeft = Math.max(0, slider.getInclusiveScrollWidth() - containerWidth);
+        const isLastSlide = slider.slides.length > 0 && slide === slider.slides[slider.slides.length - 1];
+        if (isLastSlide) {
+            scrollTarget = maxScrollLeft;
+        }
+        else if (scrollTarget !== null) {
+            scrollTarget = Math.min(scrollTarget, maxScrollLeft);
         }
         if (scrollTarget !== null) {
             setTimeout((scrollTarget) => {
@@ -440,15 +477,27 @@ function Slider(container, options, plugins) {
             }
         }
         else {
-            for (let i = 0; i < slides.length; i++) {
-                const slideRect = slides[i].getBoundingClientRect();
-                const slideStart = slideRect.left - sliderRect.left + scrollLeft + getGapSize();
-                if (Math.floor(slideStart) >= Math.floor(scrollLeft)) {
-                    activeSlideIdx = i;
-                    break;
-                }
-                if (i === slides.length - 1) {
-                    scrolledPastLastSlide = true;
+            // When scrolled (at or near) the maximum, always report the last slide as active.
+            // FullWidthPlugin's trailing margin can compress the remaining scrollable distance
+            // near the end enough that the second-to-last slide's start position also satisfies
+            // the loop's condition below, causing it to win (loop breaks on first match) even
+            // though the container is fully scrolled to the last slide.
+            const maxScrollLeft = Math.max(0, slider.getInclusiveScrollWidth() - slider.container.offsetWidth);
+            if (slides.length > 0 && Math.floor(scrollLeft) >= Math.floor(maxScrollLeft) - 1) {
+                activeSlideIdx = slides.length - 1;
+                scrolledPastLastSlide = false;
+            }
+            else {
+                for (let i = 0; i < slides.length; i++) {
+                    const slideRect = slides[i].getBoundingClientRect();
+                    const slideStart = slideRect.left - sliderRect.left + scrollLeft + getGapSize();
+                    if (Math.floor(slideStart) >= Math.floor(scrollLeft)) {
+                        activeSlideIdx = i;
+                        break;
+                    }
+                    if (i === slides.length - 1) {
+                        scrolledPastLastSlide = true;
+                    }
                 }
             }
         }
@@ -464,6 +513,7 @@ function Slider(container, options, plugins) {
     function moveToSlide(idx) {
         const slide = slider.slides[idx];
         if (slide) {
+            pendingSlideIdx = idx;
             ensureSlideIsInView(slide);
         }
     }
@@ -501,7 +551,17 @@ function Slider(container, options, plugins) {
         return hasUpcomingContent;
     }
     function moveToSlideInDirection(direction) {
-        const activeSlideIdx = slider.activeSlideIdx;
+        // If nothing is pending, slider.activeSlideIdx may be stale: it's only refreshed on
+        // a scroll event + rAF, so it can still reflect the pre-drag/pre-snap slide right
+        // after a manual scroll (e.g. drag + emulated scroll snap) settles. Recompute it
+        // synchronously here so we always base the move on the real, current position.
+        if (pendingSlideIdx === null) {
+            setActiveSlideIdx();
+        }
+        // Prefer the pending (already requested but not yet confirmed) slide index over
+        // activeSlideIdx so consecutive calls keep advancing one slide at a time instead
+        // of repeatedly targeting the same slide while a previous scroll is still in flight.
+        const activeSlideIdx = pendingSlideIdx !== null && pendingSlideIdx !== void 0 ? pendingSlideIdx : slider.activeSlideIdx;
         if (direction === 'prev') {
             if (activeSlideIdx > 0) {
                 moveToSlide(activeSlideIdx - 1);
@@ -622,7 +682,7 @@ function Slider(container, options, plugins) {
         setTimeout(() => slider.container.style.scrollBehavior = '', 50);
     }
     function snapToClosestSlide(direction = "prev") {
-        var _a, _b;
+        var _a, _b, _c, _d;
         const { slides, options, container } = slider;
         const { rtl, emulateScrollSnapMaxThreshold = 10, scrollBehavior = 'smooth', } = options;
         const isForward = rtl ? direction === 'prev' : direction === 'next';
@@ -630,22 +690,17 @@ function Slider(container, options, plugins) {
         // Get container rect once (includes any CSS transforms)
         const containerRect = container.getBoundingClientRect();
         const factor = rtl ? -1 : 1;
-        // Calculate target area offset if targetWidth is defined
-        let targetAreaOffset = 0;
-        if (typeof options.targetWidth === 'function') {
-            try {
-                const targetWidth = options.targetWidth(slider);
-                const containerWidth = containerRect.width;
-                if (Number.isFinite(targetWidth) && targetWidth > 0 && targetWidth < containerWidth) {
-                    targetAreaOffset = (containerWidth - targetWidth) / 2;
-                }
-            }
-            catch (error) {
-                // ignore errors, use default offset of 0
-            }
-        }
+        // Use the same leftOffset (FullWidthPlugin's inline margin) as ensureSlideIsInView()/
+        // setActiveSlideIdx() use, instead of recalculating it here from options.targetWidth.
+        // The two calculations could disagree by a few pixels (e.g. options.targetWidth measured
+        // against window.innerWidth while this measured against the container's own rendered
+        // width, which can differ because of scrollbars), and any such mismatch between where
+        // a drag lands and where the rest of the slider expects a "resting" slide to be can
+        // throw off which slide is considered active - making the very next moveToSlideInDirection()
+        // call move by an extra/too-few slide.
+        const targetAreaOffset = getLeftOffset();
         // Build slide metadata
-        const slideData = [...slides].map(slide => {
+        const slideData = [...slides].map((slide, index) => {
             const { width } = slide.getBoundingClientRect();
             const slideRect = slide.getBoundingClientRect();
             // position relative to container's left edge
@@ -653,22 +708,46 @@ function Slider(container, options, plugins) {
             // Adjust trigger point to align with target area start instead of container edge
             const alignmentPoint = relativeStart - targetAreaOffset;
             const triggerPoint = Math.min(alignmentPoint + width / 2, alignmentPoint + emulateScrollSnapMaxThreshold);
-            return { start: relativeStart - targetAreaOffset, trigger: triggerPoint };
+            return { index, start: relativeStart - targetAreaOffset, trigger: triggerPoint };
         });
         // Pick the target start based on drag direction
         let targetStart = null;
+        let targetIndex = null;
         if (isForward) {
             const found = slideData.find(item => scrollPos <= item.trigger);
             targetStart = (_a = found === null || found === void 0 ? void 0 : found.start) !== null && _a !== void 0 ? _a : null;
+            targetIndex = (_b = found === null || found === void 0 ? void 0 : found.index) !== null && _b !== void 0 ? _b : null;
         }
         else {
             const found = [...slideData].reverse().find(item => scrollPos >= item.trigger);
-            targetStart = (_b = found === null || found === void 0 ? void 0 : found.start) !== null && _b !== void 0 ? _b : null;
+            targetStart = (_c = found === null || found === void 0 ? void 0 : found.start) !== null && _c !== void 0 ? _c : null;
+            targetIndex = (_d = found === null || found === void 0 ? void 0 : found.index) !== null && _d !== void 0 ? _d : null;
         }
         if (targetStart == null)
             return;
+        // The snap animation (below) can take a while (smooth scrollBehavior) during which
+        // scrollLeft is a moving target. If moveToSlideInDirection() is called while it's still
+        // in flight (e.g. user clicks an arrow right after releasing a drag), its synchronous
+        // activeSlideIdx recompute would read that moving position and could easily land on the
+        // wrong slide, requiring an extra click to correct. Tracking the resolved target here,
+        // the same way moveToSlide() does, makes that recompute unnecessary until the position
+        // actually changes again (native scroll or another manual interaction).
+        if (targetIndex !== null) {
+            pendingSlideIdx = targetIndex;
+        }
         // Clamp to zero and apply RTL factor
-        const finalLeft = Math.max(0, Math.floor(targetStart)) * factor;
+        let finalLeft = Math.max(0, Math.floor(targetStart)) * factor;
+        // Also clamp to the real scrollable range, same as ensureSlideIsInView() does, so a
+        // drag that settles near the last slide always lands exactly on the browser's real
+        // max scroll position rather than a slightly different value that setActiveSlideIdx()
+        // would then interpret as a different (earlier) slide being active.
+        const maxScrollLeft = Math.max(0, slider.getInclusiveScrollWidth() - container.offsetWidth);
+        if (!rtl) {
+            finalLeft = Math.min(finalLeft, maxScrollLeft);
+        }
+        else {
+            finalLeft = Math.max(finalLeft, -maxScrollLeft);
+        }
         container.scrollTo({ left: finalLeft, behavior: scrollBehavior });
     }
     function on(name, cb) {

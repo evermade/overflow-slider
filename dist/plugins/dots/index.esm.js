@@ -20,7 +20,6 @@ function DotsPlugin(args) {
         const buildDots = () => {
             dots.setAttribute('data-has-content', slider.details.hasOverflow.toString());
             dots.innerHTML = '';
-            console.log('buildDots');
             const dotsList = document.createElement('ul');
             const count = options.type === 'view' ? slider.details.amountOfPages : slider.details.slideCount;
             const currentIndex = options.type === 'view' ? slider.details.currentPage : slider.activeSlideIdx;
@@ -78,7 +77,6 @@ function DotsPlugin(args) {
             }
         };
         const activateDot = (index) => {
-            console.log('activateDot', index, 'slider.details', slider.details);
             if (options.type === 'view') {
                 const count = slider.details.amountOfPages;
                 let targetPosition = slider.details.containerWidth * (index - 1);

@@ -86,11 +86,9 @@ function ScrollIndicatorPlugin(args) {
             const scrollbarButtonRight = scrollbarButtonLeft + scrollbarButtonWidth;
             const clickX = e.pageX - scrollbarContainer.getBoundingClientRect().left;
             if (Math.floor(clickX) < Math.floor(scrollbarButtonLeft)) {
-                console.log('move left');
                 slider.moveToDirection(slider.options.rtl ? 'next' : 'prev');
             }
             else if (Math.floor(clickX) > Math.floor(scrollbarButtonRight)) {
-                console.log('move right');
                 slider.moveToDirection(slider.options.rtl ? 'prev' : 'next');
             }
         });
