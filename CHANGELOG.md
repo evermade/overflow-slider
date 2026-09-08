@@ -1,5 +1,9 @@
 # Changelog
 
+### 4.2.5
+
+* Fix: add aria-disabled to buttons to indicate if there is content to scroll to
+
 ### 4.2.4
 
 * Fix: in FullWidthPlugin `moveToSlideInDirection()`/`moveToSlide()` not moving exactly one slide, and not reaching the first/last slide

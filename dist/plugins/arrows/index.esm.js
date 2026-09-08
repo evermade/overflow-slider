@@ -52,23 +52,27 @@ function ArrowsPlugin(args) {
         // insert buttons to the nav
         nav.appendChild(prev);
         nav.appendChild(next);
+        const setButtonDisabledState = (button, hasContent) => {
+            button.setAttribute('data-has-content', hasContent ? 'true' : 'false');
+            button.setAttribute('aria-disabled', hasContent ? 'false' : 'true');
+        };
         const update = () => {
             const scrollLeft = slider.getScrollLeft();
             const scrollWidth = slider.getInclusiveScrollWidth();
             const clientWidth = slider.getInclusiveClientWidth();
             const buffer = 1;
             if (Math.floor(scrollLeft) === 0) {
-                prev.setAttribute('data-has-content', 'false');
+                setButtonDisabledState(prev, false);
             }
             else {
-                prev.setAttribute('data-has-content', 'true');
+                setButtonDisabledState(prev, true);
             }
             const maxWidthDifference = Math.abs(Math.floor(scrollLeft + clientWidth) - Math.floor(scrollWidth));
             if (maxWidthDifference <= buffer) {
-                next.setAttribute('data-has-content', 'false');
+                setButtonDisabledState(next, false);
             }
             else {
-                next.setAttribute('data-has-content', 'true');
+                setButtonDisabledState(next, true);
             }
         };
         if (options.containerNext && options.containerPrev) {
