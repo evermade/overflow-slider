@@ -13,6 +13,7 @@ This project uses a manual release process.
    
 3. **Push changes and create GitHub release**
    ```bash
+   git tag x.x.x
    git push
    git push --tags
    ```
@@ -33,7 +34,17 @@ This project uses a manual release process.
 
 - Make sure you're logged into npm: `npm whoami`
 - Make sure you have write access to the `@evermade/overflow-slider` package
-- Make sure you're on the main branch with latest changes
+- Make sure you're on the master branch with latest changes
+
+Note: You may need to authenticate with legacy mode if you develop in server that can't open browser:
+
+```
+npm login \
+  --auth-type=web \
+  --browser=false \
+  --scope=@evermade \
+  --registry=https://registry.npmjs.org/
+```
 
 ## Notes
 
